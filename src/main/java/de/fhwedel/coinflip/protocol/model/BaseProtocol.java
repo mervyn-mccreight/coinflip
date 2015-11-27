@@ -6,10 +6,6 @@ import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 import java.util.List;
 
-// todo (27.11.2015): redesign base protocol so it just has a the id, status and statusMessage
-// fields.
-// todo (27.11.2015): protocolNegotiation then moves to a subclass, as it represents the negotiation
-// steps.
 public class BaseProtocol {
   @SerializedName("protocolId")
   private ProtocolId id;
