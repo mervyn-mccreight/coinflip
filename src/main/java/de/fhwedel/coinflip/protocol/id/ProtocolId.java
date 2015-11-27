@@ -1,5 +1,10 @@
 package de.fhwedel.coinflip.protocol.id;
 
+import com.google.common.collect.Maps;
+
+import java.util.Map;
+import java.util.Optional;
+
 public enum ProtocolId {
   ZERO(0, "Protocol version negotiation step one"), ONE(1, "Protocol version negotiation step two");
 
@@ -17,5 +22,18 @@ public enum ProtocolId {
 
   public String getMessage() {
     return message;
+  }
+
+  public static Optional<ProtocolId> fromId(int id) {
+    return Optional.ofNullable(mapping.get(id));
+  }
+
+  private static final Map<Integer, ProtocolId> mapping;
+
+  static {
+    mapping = Maps.newHashMap();
+    for (ProtocolId id : ProtocolId.values()) {
+      mapping.put(id.getId(), id);
+    }
   }
 }
