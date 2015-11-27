@@ -32,25 +32,7 @@ public class Protocol {
     return protocolNegotiation.getNegotiatedVersion();
   }
 
-  private class ProtocolNegotiation {
-    private String version;
-    private List<Versions> availableVersions;
-
-    private ProtocolNegotiation(String version, List<Versions> availableVersions) {
-      this.version = version;
-      this.availableVersions = availableVersions;
-    }
-
-    public String getNegotiatedVersion() {
-      return this.version;
-    }
-
-    private class Versions {
-      private List<String> versions;
-
-      private Versions(List<String> versions) {
-        this.versions = versions;
-      }
-    }
+  public List<Versions> getProposedVersions() {
+    return protocolNegotiation.getAvailableVersions();
   }
 }

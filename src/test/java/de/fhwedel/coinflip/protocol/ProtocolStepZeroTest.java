@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,5 +49,22 @@ public class ProtocolStepZeroTest {
     Protocol protocol = parser.parseJson(jsonString);
 
     assertThat(protocol.getNegotiatedVersion()).isNull();
+  }
+
+  @Test
+  public void ownProposedVersionIsJustOne() throws Exception {
+    Protocol protocol = parser.parseJson(jsonString);
+
+    List<Versions> proposedVersions = protocol.getProposedVersions();
+    assertThat(proposedVersions).hasSize(1);
+
+    Versions versions = proposedVersions.get(0);
+    assertThat(versions.count()).isEqualTo(1);
+
+    List<String> versionList = versions.get();
+    assertThat(versionList).hasSize(1);
+
+    String s = versionList.get(0);
+    assertThat(s).isEqualTo("1.0");
   }
 }
