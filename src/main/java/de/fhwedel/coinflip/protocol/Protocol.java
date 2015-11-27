@@ -3,7 +3,10 @@ package de.fhwedel.coinflip.protocol;
 import java.util.List;
 
 public class Protocol {
+  // todo (27.11.2015): custom de-/serializer for ProtocolId-Enum.
   private int protocolId;
+
+  // todo (27.11.2015): custom de-/serializer for ProtocolStatus-Enum.
   private int statusId;
   private String statusMessage;
   private ProtocolNegotiation protocolNegotiation;
