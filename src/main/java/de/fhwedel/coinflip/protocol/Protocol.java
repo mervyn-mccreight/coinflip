@@ -16,7 +16,7 @@ public class Protocol {
     this.protocolNegotiation = protocolNegotiation;
   }
 
-  public int getVersion() {
+  public int getStep() {
     return this.protocolId;
   }
 

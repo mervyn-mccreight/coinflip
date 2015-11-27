@@ -1,5 +1,6 @@
 package de.fhwedel.coinflip.protocol;
 
+import de.fhwedel.coinflip.protocol.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.status.ProtocolStatus;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -27,7 +28,7 @@ public class ProtocolStepZeroTest {
     Protocol protocol = parser.parseJson(jsonString);
 
     assertThat(protocol).isNotNull();
-    assertThat(protocol.getVersion()).isEqualTo(0);
+    assertThat(protocol.getStep()).isEqualTo(ProtocolId.ZERO.getId());
   }
 
   @Test
