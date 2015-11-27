@@ -1,12 +1,13 @@
 package de.fhwedel.coinflip.protocol.model.id;
 
-import com.google.common.collect.Maps;
-
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.Maps;
+
 public enum ProtocolId {
-  ZERO(0, "Protocol version negotiation step one"), ONE(1, "Protocol version negotiation step two");
+  ZERO(0, "Protocol version negotiation step one"), ONE(1,
+      "Protocol version negotiation step two"), TWO(2, "SID negotiation step one");
 
   private final int id;
   private final String message;
