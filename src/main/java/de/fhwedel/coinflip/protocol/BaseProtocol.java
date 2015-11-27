@@ -1,30 +1,40 @@
 package de.fhwedel.coinflip.protocol;
 
+import com.google.gson.annotations.SerializedName;
 import de.fhwedel.coinflip.protocol.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.status.ProtocolStatus;
 
 import java.util.List;
 
+// todo (27.11.2015): redesign base protocol so it just has a the id, status and statusMessage
+// fields.
+// todo (27.11.2015): protocolNegotiation then moves to a subclass, as it represents the negotiation
+// steps.
 public class BaseProtocol {
-  private ProtocolId protocolId;
-  // todo (27.11.2015): custom de-/serializer for ProtocolStatus-Enum.
-  private int statusId;
+  @SerializedName("protocolId")
+  private ProtocolId id;
+
+  @SerializedName("statusId")
+  private ProtocolStatus status;
+
   private String statusMessage;
+
   private ProtocolNegotiation protocolNegotiation;
 
-  public BaseProtocol(ProtocolId protocolId, int statusId, String statusMessage,
+  public BaseProtocol(ProtocolId id, ProtocolStatus status, String statusMessage,
       ProtocolNegotiation protocolNegotiation) {
-    this.protocolId = protocolId;
-    this.statusId = statusId;
+    this.id = id;
+    this.status = status;
     this.statusMessage = statusMessage;
     this.protocolNegotiation = protocolNegotiation;
   }
 
   public int getStep() {
-    return this.protocolId.getId();
+    return this.id.getId();
   }
 
   public int getStatus() {
-    return this.statusId;
+    return this.status.getId();
   }
 
   public String getStatusMessage() {
