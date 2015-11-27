@@ -65,6 +65,11 @@ public class SpecificationStepTwoTest {
     BaseProtocol protocol = parser.parseJson(jsonString);
 
     assertThat(protocol.getPlainCoin()).isEmpty();
-    // assertThat(protocol.getDesiredCoin()).isNull();
+    assertThat(protocol.getDesiredCoinSide()).isNull();
+    assertThat(protocol.getEncryptedCoin()).isEmpty();
+    assertThat(protocol.getEncryptedChosenCoin()).isNull();
+    assertThat(protocol.getDecryptedChosenCoin()).isNull();
+    assertThat(protocol.getPrivateParametersForKeyA()).isEmpty();
+    assertThat(protocol.getPrivateParametersForKeyB()).isEmpty();
   }
 }

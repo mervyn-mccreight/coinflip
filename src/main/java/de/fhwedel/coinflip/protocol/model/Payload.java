@@ -32,6 +32,30 @@ public class Payload {
     return Lists.newArrayList(this.initialCoin);
   }
 
+  public String getDesiredCoin() {
+    return this.desiredCoin;
+  }
+
+  public List<String> getEncryptedCoin() {
+    return Lists.newArrayList(this.encryptedCoin);
+  }
+
+  public String getEnChosenCoin() {
+    return this.enChosenCoin;
+  }
+
+  public String getDeChosenCoin() {
+    return this.deChosenCoin;
+  }
+
+  public List<BigInteger> getKeyA() {
+    return Lists.newArrayList(this.keyA);
+  }
+
+  public List<BigInteger> getKeyB() {
+    return Lists.newArrayList(this.keyB);
+  }
+
   // todo (27.11.2015): signature missing, but i do not know that it is atm.
   // lol @ protocol.
 }

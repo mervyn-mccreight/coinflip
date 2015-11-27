@@ -71,4 +71,28 @@ public class BaseProtocol {
   public List<String> getPlainCoin() {
     return this.payload.getInitialCoin();
   }
+
+  public String getDesiredCoinSide() {
+    return this.payload.getDesiredCoin();
+  }
+
+  public List<String> getEncryptedCoin() {
+    return this.payload.getEncryptedCoin();
+  }
+
+  public String getEncryptedChosenCoin() {
+    return this.payload.getEnChosenCoin();
+  }
+
+  public String getDecryptedChosenCoin() {
+    return this.payload.getDeChosenCoin();
+  }
+
+  public List<BigInteger> getPrivateParametersForKeyA() {
+    return this.payload.getKeyA();
+  }
+
+  public List<BigInteger> getPrivateParametersForKeyB() {
+    return this.payload.getKeyB();
+  }
 }

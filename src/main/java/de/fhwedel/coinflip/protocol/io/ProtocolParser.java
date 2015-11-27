@@ -2,6 +2,7 @@ package de.fhwedel.coinflip.protocol.io;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolIdDeserializer;

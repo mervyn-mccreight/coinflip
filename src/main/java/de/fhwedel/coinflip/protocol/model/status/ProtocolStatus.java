@@ -1,9 +1,9 @@
 package de.fhwedel.coinflip.protocol.model.status;
 
-import com.google.common.collect.Maps;
-
 import java.util.Map;
 import java.util.Optional;
+
+import com.google.common.collect.Maps;
 
 public enum ProtocolStatus {
   OK(0, "OK");
