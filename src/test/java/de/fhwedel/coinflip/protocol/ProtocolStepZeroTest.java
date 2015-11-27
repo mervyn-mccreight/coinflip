@@ -42,4 +42,11 @@ public class ProtocolStepZeroTest {
 
     assertThat(protocol.getStatusMessage()).isEqualTo(ProtocolStatus.OK.getMessage());
   }
+
+  @Test
+  public void versionNotYetNegotiated() throws Exception {
+    Protocol protocol = parser.parseJson(jsonString);
+
+    assertThat(protocol.getNegotiatedVersion()).isNull();
+  }
 }
