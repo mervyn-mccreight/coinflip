@@ -1,7 +1,10 @@
 package de.fhwedel.coinflip.protocol;
 
-import de.fhwedel.coinflip.protocol.id.ProtocolId;
-import de.fhwedel.coinflip.protocol.status.ProtocolStatus;
+import de.fhwedel.coinflip.protocol.model.BaseProtocol;
+import de.fhwedel.coinflip.protocol.model.Versions;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.io.ProtocolParser;
+import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;

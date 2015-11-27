@@ -1,4 +1,4 @@
-package de.fhwedel.coinflip.protocol.id;
+package de.fhwedel.coinflip.protocol.model.id;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

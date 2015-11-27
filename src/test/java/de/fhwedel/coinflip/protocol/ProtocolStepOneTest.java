@@ -1,6 +1,9 @@
 package de.fhwedel.coinflip.protocol;
 
-import de.fhwedel.coinflip.protocol.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.BaseProtocol;
+import de.fhwedel.coinflip.protocol.model.Versions;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.io.ProtocolParser;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Condition;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package de.fhwedel.coinflip.protocol.status;
+package de.fhwedel.coinflip.protocol.model.status;
 
 import com.google.common.collect.Maps;
 

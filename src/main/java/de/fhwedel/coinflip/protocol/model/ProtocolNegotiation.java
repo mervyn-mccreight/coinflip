@@ -1,4 +1,4 @@
-package de.fhwedel.coinflip.protocol;
+package de.fhwedel.coinflip.protocol.model;
 
 import java.util.List;
 

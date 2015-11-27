@@ -1,8 +1,8 @@
-package de.fhwedel.coinflip.protocol;
+package de.fhwedel.coinflip.protocol.model;
 
 import com.google.gson.annotations.SerializedName;
-import de.fhwedel.coinflip.protocol.id.ProtocolId;
-import de.fhwedel.coinflip.protocol.status.ProtocolStatus;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 import java.util.List;
 

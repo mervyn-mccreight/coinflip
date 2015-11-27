@@ -1,13 +1,14 @@
-package de.fhwedel.coinflip.protocol;
+package de.fhwedel.coinflip.protocol.io;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.fhwedel.coinflip.protocol.id.ProtocolId;
-import de.fhwedel.coinflip.protocol.id.ProtocolIdDeserializer;
-import de.fhwedel.coinflip.protocol.id.ProtocolIdSerializer;
-import de.fhwedel.coinflip.protocol.status.ProtocolStatus;
-import de.fhwedel.coinflip.protocol.status.ProtocolStatusDeserializer;
-import de.fhwedel.coinflip.protocol.status.ProtocolStatusSerializer;
+import de.fhwedel.coinflip.protocol.model.BaseProtocol;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolIdDeserializer;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolIdSerializer;
+import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
+import de.fhwedel.coinflip.protocol.model.status.ProtocolStatusDeserializer;
+import de.fhwedel.coinflip.protocol.model.status.ProtocolStatusSerializer;
 
 public class ProtocolParser {
 
