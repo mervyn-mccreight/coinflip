@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ProtocolStepZeroTest {
+public class SpecificationStepZeroTest {
   private String jsonString;
   private ProtocolParser parser;
 

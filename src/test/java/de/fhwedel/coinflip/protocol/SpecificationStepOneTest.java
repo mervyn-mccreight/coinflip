@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ProtocolStepOneTest {
+public class SpecificationStepOneTest {
   private String jsonString;
   private ProtocolParser parser;
 
@@ -39,6 +39,12 @@ public class ProtocolStepOneTest {
 
     assertThat(proposedVersions).hasSize(2);
     assertThat(proposedVersions).areExactly(2, foo);
+  }
+
+  @Test
+  public void versionIsSet() throws Exception {
+    BaseProtocol baseProtocol = parser.parseJson(jsonString);
+    assertThat(baseProtocol.getNegotiatedVersion()).isEqualTo("1.0");
   }
 
   private final Condition<Versions> foo = new Condition<Versions>("only version 1.0") {
