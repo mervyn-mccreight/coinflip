@@ -2,7 +2,7 @@ package de.fhwedel.coinflip.protocol;
 
 import java.util.List;
 
-public class Protocol {
+public class BaseProtocol {
   // todo (27.11.2015): custom de-/serializer for ProtocolId-Enum.
   private int protocolId;
 
@@ -11,7 +11,7 @@ public class Protocol {
   private String statusMessage;
   private ProtocolNegotiation protocolNegotiation;
 
-  public Protocol(int protocolId, int statusId, String statusMessage,
+  public BaseProtocol(int protocolId, int statusId, String statusMessage,
       ProtocolNegotiation protocolNegotiation) {
     this.protocolId = protocolId;
     this.statusId = statusId;

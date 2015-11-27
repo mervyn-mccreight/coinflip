@@ -18,14 +18,14 @@ public class ProtocolStepZeroTest {
   @Before
   public void setUp() throws Exception {
     // given
-    File file = new File("src/test/resources/0.json");
+    File file = new File("src/test/resources/protocol/specification/0.json");
     jsonString = FileUtils.readFileToString(file);
     parser = new ProtocolParser();
   }
 
   @Test
   public void readProtocolVersion() throws Exception {
-    Protocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString);
 
     assertThat(protocol).isNotNull();
     assertThat(protocol.getStep()).isEqualTo(ProtocolId.ZERO.getId());
@@ -33,28 +33,28 @@ public class ProtocolStepZeroTest {
 
   @Test
   public void readStatusId() throws Exception {
-    Protocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString);
 
     assertThat(protocol.getStatus()).isEqualTo(ProtocolStatus.OK.getId());
   }
 
   @Test
   public void readStatusMessage() throws Exception {
-    Protocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString);
 
     assertThat(protocol.getStatusMessage()).isEqualTo(ProtocolStatus.OK.getMessage());
   }
 
   @Test
   public void versionNotYetNegotiated() throws Exception {
-    Protocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString);
 
     assertThat(protocol.getNegotiatedVersion()).isNull();
   }
 
   @Test
   public void ownProposedVersionIsJustOne() throws Exception {
-    Protocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString);
 
     List<Versions> proposedVersions = protocol.getProposedVersions();
     assertThat(proposedVersions).hasSize(1);
