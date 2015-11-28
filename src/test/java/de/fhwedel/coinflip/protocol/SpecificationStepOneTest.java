@@ -15,7 +15,7 @@ import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.Versions;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 
-public class SpecificationStepOneTest {
+public class SpecificationStepOneTest extends AbstractProtocolSpecificationTest {
   private String jsonString;
   private ProtocolParser parser;
 
@@ -30,7 +30,7 @@ public class SpecificationStepOneTest {
   @Test
   public void getStep() throws Exception {
     BaseProtocol baseProtocol = parser.parseJson(jsonString);
-    assertThat(baseProtocol.getStep()).isEqualTo(ProtocolId.ONE.getId());
+    assertProtocolStep(baseProtocol, ProtocolId.ONE);
   }
 
   @Test

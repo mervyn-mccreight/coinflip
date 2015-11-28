@@ -15,7 +15,7 @@ import de.fhwedel.coinflip.protocol.model.Versions;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
-public class SpecificationStepZeroTest {
+public class SpecificationStepZeroTest extends AbstractProtocolSpecificationTest {
   private String jsonString;
   private ProtocolParser parser;
 
@@ -30,9 +30,7 @@ public class SpecificationStepZeroTest {
   @Test
   public void readProtocolVersion() throws Exception {
     BaseProtocol protocol = parser.parseJson(jsonString);
-
-    assertThat(protocol).isNotNull();
-    assertThat(protocol.getStep()).isEqualTo(ProtocolId.ZERO.getId());
+    assertProtocolStep(protocol, ProtocolId.ZERO);
   }
 
   @Test

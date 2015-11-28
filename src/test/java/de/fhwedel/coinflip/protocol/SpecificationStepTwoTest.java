@@ -16,7 +16,7 @@ import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.Sids;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 
-public class SpecificationStepTwoTest {
+public class SpecificationStepTwoTest extends AbstractProtocolSpecificationTest {
   private String jsonString;
   private ProtocolParser parser;
 
@@ -31,7 +31,7 @@ public class SpecificationStepTwoTest {
   @Test
   public void getStep() throws Exception {
     BaseProtocol baseProtocol = parser.parseJson(jsonString);
-    assertThat(baseProtocol.getStep()).isEqualTo(ProtocolId.TWO.getId());
+    assertProtocolStep(baseProtocol, ProtocolId.TWO);
   }
 
   @Test
@@ -63,13 +63,6 @@ public class SpecificationStepTwoTest {
   @Test
   public void payloadIsEmpty() throws Exception {
     BaseProtocol protocol = parser.parseJson(jsonString);
-
-    assertThat(protocol.getPlainCoin()).isEmpty();
-    assertThat(protocol.getDesiredCoinSide()).isNull();
-    assertThat(protocol.getEncryptedCoin()).isEmpty();
-    assertThat(protocol.getEncryptedChosenCoin()).isNull();
-    assertThat(protocol.getDecryptedChosenCoin()).isNull();
-    assertThat(protocol.getPrivateParametersForKeyA()).isEmpty();
-    assertThat(protocol.getPrivateParametersForKeyB()).isEmpty();
+    assertEmptyPayload(protocol);
   }
 }
