@@ -6,6 +6,8 @@ import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
+import java.math.BigInteger;
+
 public abstract class AbstractProtocolSpecificationTest {
   public void assertEmptyPayload(BaseProtocol protocol) {
     assertThat(protocol.getPlainCoin()).isEmpty();
@@ -40,5 +42,10 @@ public abstract class AbstractProtocolSpecificationTest {
 
   public void assertStatusId(BaseProtocol protocol, ProtocolStatus status) {
     assertThat(protocol.getStatus()).isEqualTo(status.getId());
+  }
+
+  public void assertPandQ(BaseProtocol protocol, BigInteger p, BigInteger q) {
+    assertThat(protocol.getP()).isEqualTo(p);
+    assertThat(protocol.getQ()).isEqualTo(q);
   }
 }
