@@ -36,22 +36,19 @@ public class SpecificationStepZeroTest extends AbstractProtocolSpecificationTest
   @Test
   public void readStatusId() throws Exception {
     BaseProtocol protocol = parser.parseJson(jsonString);
-
-    assertThat(protocol.getStatus()).isEqualTo(ProtocolStatus.OK.getId());
+    assertStatusId(protocol, ProtocolStatus.OK);
   }
 
   @Test
   public void readStatusMessage() throws Exception {
     BaseProtocol protocol = parser.parseJson(jsonString);
-
     assertThat(protocol.getStatusMessage()).isEqualTo(ProtocolStatus.OK.getMessage());
   }
 
   @Test
   public void versionNotYetNegotiated() throws Exception {
     BaseProtocol protocol = parser.parseJson(jsonString);
-
-    assertThat(protocol.getNegotiatedVersion()).isNull();
+    assertNoNegotiatedVersion(protocol);
   }
 
   @Test

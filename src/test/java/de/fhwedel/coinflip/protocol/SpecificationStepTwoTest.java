@@ -37,15 +37,13 @@ public class SpecificationStepTwoTest extends AbstractProtocolSpecificationTest 
   @Test
   public void pAndQAreEmpty() throws Exception {
     BaseProtocol protocol = parser.parseJson(jsonString);
-
-    assertThat(protocol.getP()).isNull();
-    assertThat(protocol.getQ()).isNull();
+    assertEmptyPandQ(protocol);
   }
 
   @Test
   public void getSid() throws Exception {
     BaseProtocol protocol = parser.parseJson(jsonString);
-    assertThat(protocol.getSid()).isEqualTo(0);
+    assertSid(protocol, 0);
   }
 
   @Test

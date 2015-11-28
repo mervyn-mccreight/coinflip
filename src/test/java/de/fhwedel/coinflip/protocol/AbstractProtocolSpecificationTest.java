@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public abstract class AbstractProtocolSpecificationTest {
   public void assertEmptyPayload(BaseProtocol protocol) {
@@ -18,5 +19,26 @@ public abstract class AbstractProtocolSpecificationTest {
 
   public void assertProtocolStep(BaseProtocol protocol, ProtocolId expected) {
     assertThat(protocol.getStep()).isEqualTo(expected.getId());
+  }
+
+  public void assertNoNegotiatedVersion(BaseProtocol protocol) {
+    assertThat(protocol.getNegotiatedVersion()).isNull();
+  }
+
+  public void assertNegotiatedVersionIsSetTo(BaseProtocol protocol, String version) {
+    assertThat(protocol.getNegotiatedVersion()).isEqualTo(version);
+  }
+
+  public void assertEmptyPandQ(BaseProtocol protocol) {
+    assertThat(protocol.getP()).isNull();
+    assertThat(protocol.getQ()).isNull();
+  }
+
+  public void assertSid(BaseProtocol protocol, int sid) {
+    assertThat(protocol.getSid()).isEqualTo(sid);
+  }
+
+  public void assertStatusId(BaseProtocol protocol, ProtocolStatus status) {
+    assertThat(protocol.getStatus()).isEqualTo(status.getId());
   }
 }

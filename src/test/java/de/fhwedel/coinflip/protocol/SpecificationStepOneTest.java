@@ -45,7 +45,7 @@ public class SpecificationStepOneTest extends AbstractProtocolSpecificationTest 
   @Test
   public void versionIsSet() throws Exception {
     BaseProtocol baseProtocol = parser.parseJson(jsonString);
-    assertThat(baseProtocol.getNegotiatedVersion()).isEqualTo("1.0");
+    assertNegotiatedVersionIsSetTo(baseProtocol, "1.0");
   }
 
   private final Condition<Versions> foo = new Condition<Versions>("only version 1.0") {
