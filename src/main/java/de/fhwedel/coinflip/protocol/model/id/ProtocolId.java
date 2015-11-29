@@ -9,7 +9,8 @@ public enum ProtocolId {
   ZERO(0, "Protocol version negotiation step one"), ONE(1,
       "Protocol version negotiation step two"), TWO(2, "Initialize SID negotiation"), THREE(3,
           "p and q generation"), FOUR(4, "Coin Encryption"), FIVE(5,
-              "Coin flip - choose encrypted coin side");
+              "Coin flip - choose encrypted coin side"), SIX(6,
+                  "Coin flip - decrypt chosen coin side and initialize key exchange handshake");
 
   private final int id;
   private final String message;
