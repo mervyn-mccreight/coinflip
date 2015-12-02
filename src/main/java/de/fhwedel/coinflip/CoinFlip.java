@@ -2,6 +2,8 @@ package de.fhwedel.coinflip;
 
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+
 public class CoinFlip {
 
   private static Logger logger = Logger.getLogger(CoinFlip.class);
@@ -13,7 +15,14 @@ public class CoinFlip {
 
     switch (args[0]) {
       case "--server":
-        logger.info("Starting as a server.");
+        try {
+          int port = Integer.parseInt(args[1]);
+          logger.info("Starting as a server.");
+          CoinFlipServer coinFlipServer = new CoinFlipServer(port);
+          coinFlipServer.start();
+        } catch (NumberFormatException e) {
+          printUsageAndExit();
+        }
         break;
       case "--client":
         logger.info("Starting as a client.");
@@ -21,6 +30,7 @@ public class CoinFlip {
       default:
         printUsageAndExit();
     }
+    logger.info("CoinFlip Client shut down.");
   }
 
   private static void printUsageAndExit() {
