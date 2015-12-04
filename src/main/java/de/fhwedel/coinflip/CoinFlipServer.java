@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -73,7 +74,8 @@ public class CoinFlipServer {
       while (running) {
         LineIterator lineIterator = null;
         try {
-          lineIterator = IOUtils.lineIterator(System.in, "UTF-8");
+          // todo (04.12.2015): which charset are we encoding the string for streaming?
+          lineIterator = IOUtils.lineIterator(System.in, Charset.defaultCharset());
           System.out.print("> ");
           while (lineIterator.hasNext()) {
             System.out.print("> ");
