@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 public class CoinFlipServer {
   private final int port;
   private static final Logger logger = Logger.getLogger(CoinFlip.class);
-  private static final String CLOSE_MESSAGE = "ABORT_SERVER" + System.lineSeparator();
+  private static final String CLOSE_MESSAGE = "ABORT_SERVER";
   private boolean running = true;
 
   public CoinFlipServer(int port) {
