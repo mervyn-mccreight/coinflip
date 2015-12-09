@@ -28,4 +28,8 @@ public class ProtocolParser {
   public BaseProtocol parseJson(String jsonString) {
     return gson.fromJson(jsonString, BaseProtocol.class);
   }
+
+  public String toJson(BaseProtocol protocol) {
+    return gson.toJson(protocol);
+  }
 }

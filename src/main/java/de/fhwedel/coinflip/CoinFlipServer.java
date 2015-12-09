@@ -6,7 +6,14 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.Optional;
+import java.util.Scanner;
 
+import de.fhwedel.coinflip.protocol.ProtocolHandler;
+import de.fhwedel.coinflip.protocol.io.ProtocolParser;
+import de.fhwedel.coinflip.protocol.model.BaseProtocol;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.net.DefaultSocketFactory;
@@ -27,8 +34,12 @@ public class CoinFlipServer {
     try (ServerSocket serverSocket = factory.createServerSocket(port)) {
       new Thread(new KeyboardListener()).start();
 
+      logger.debug("Started server at: " + serverSocket.toString());
+
       while (running) {
         Socket client = serverSocket.accept();
+        logger.debug(
+            "Accepting connection to server socket from: " + client.getInetAddress().toString());
         new Thread(new ConnectionHandler(client)).start();
       }
     } catch (IOException e) {
@@ -42,6 +53,7 @@ public class CoinFlipServer {
   private class ConnectionHandler implements Runnable {
     private final Logger logger = Logger.getLogger(ConnectionHandler.class);
     private Socket client;
+    private final ProtocolParser parser = new ProtocolParser();
 
     public ConnectionHandler(Socket clientSocket) {
       this.client = clientSocket;
@@ -49,23 +61,39 @@ public class CoinFlipServer {
 
     @Override
     public void run() {
-      try (InputStream inputStream = client.getInputStream()) {
-        String message = IOUtils.toString(inputStream);
+      while (!client.isClosed() && running) {
+        try (InputStream inputStream = client.getInputStream()) {
+          Scanner scanner = new Scanner(inputStream);
+          if (!scanner.hasNextLine()) {
+            continue;
+          }
 
-        if (message.equals(CLOSE_MESSAGE)) {
-          logger.info("Received CLOSE_MESSAGE");
-          return;
+          String message = scanner.nextLine();
+
+          logger.info("Received from client:");
+          logger.info(message);
+
+          if (message.equals(CLOSE_MESSAGE)) {
+            logger.info("Received CLOSE_MESSAGE");
+            return;
+          }
+
+          BaseProtocol protocol = parser.parseJson(message);
+          Optional<BaseProtocol> answer = ProtocolHandler.work(protocol);
+
+          String answerString =
+              parser.toJson(answer.orElseGet(() -> new BaseProtocol(ProtocolId.ERROR,
+                  ProtocolStatus.ERROR, ProtocolStatus.ERROR.getMessage(), null, null)));
+
+          IOUtils.write(answerString + System.lineSeparator(), client.getOutputStream());
+        } catch (IOException e) {
+          logger.error("Error in reading from client-sockets input stream. Aborting..", e);
+          throw new RuntimeException(e);
         }
-
-        logger.info("Received from client:");
-        logger.info(message);
-      } catch (IOException e) {
-        logger.error("Error in reading from client-sockets input stream. Aborting..", e);
-        throw new RuntimeException(e);
       }
+      logger.info("Closing connection to: " + client.getInetAddress().toString());
     }
   }
-
 
   private class KeyboardListener implements Runnable {
     @Override

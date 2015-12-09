@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.google.common.collect.Maps;
 
 public enum ProtocolStatus {
-  OK(0, "OK");
+  OK(0, "OK"), ERROR(10, "ERROR");
 
   private final int id;
   private final String message;

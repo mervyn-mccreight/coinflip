@@ -11,7 +11,7 @@ public enum ProtocolId {
           "p and q generation"), FOUR(4, "Coin Encryption"), FIVE(5,
               "Coin flip - choose encrypted coin side"), SIX(6,
                   "Coin flip - decrypt chosen coin side and initialize key exchange handshake"), SEVEN(
-                      7, "Coin flip - answer key exchange handshake");
+                      7, "Coin flip - answer key exchange handshake"), ERROR(-1, "Error Status");
 
   private final int id;
   private final String message;
