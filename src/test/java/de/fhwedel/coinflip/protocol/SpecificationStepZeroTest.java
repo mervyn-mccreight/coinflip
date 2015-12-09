@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -29,31 +30,31 @@ public class SpecificationStepZeroTest extends AbstractProtocolSpecificationTest
 
   @Test
   public void readProtocolVersion() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
     assertProtocolStep(protocol, ProtocolId.ZERO);
   }
 
   @Test
   public void readStatusId() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
     assertStatusId(protocol, ProtocolStatus.OK);
   }
 
   @Test
   public void readStatusMessage() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
     assertThat(protocol.getStatusMessage()).isEqualTo(ProtocolStatus.OK.getMessage());
   }
 
   @Test
   public void versionNotYetNegotiated() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
     assertNoNegotiatedVersion(protocol);
   }
 
   @Test
   public void ownProposedVersionIsJustOne() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
 
     List<Versions> proposedVersions = protocol.getProposedVersions();
     assertThat(proposedVersions).hasSize(1);
@@ -61,10 +62,9 @@ public class SpecificationStepZeroTest extends AbstractProtocolSpecificationTest
     Versions versions = proposedVersions.get(0);
     assertThat(versions.count()).isEqualTo(1);
 
-    List<String> versionList = versions.get();
-    assertThat(versionList).hasSize(1);
+    Set<String> versionSet = versions.get();
+    assertThat(versionSet).hasSize(1);
 
-    String s = versionList.get(0);
-    assertThat(s).isEqualTo("1.0");
+    assertThat(versionSet).containsExactly("1.0");
   }
 }

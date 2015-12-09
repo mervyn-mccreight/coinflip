@@ -2,9 +2,11 @@ package de.fhwedel.coinflip;
 
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
+import de.fhwedel.coinflip.protocol.model.Versions;
 
 public class CoinFlip {
+
+  public static final Versions supportedVersions = Versions.containing("1.0");
 
   private static Logger logger = Logger.getLogger(CoinFlip.class);
 
@@ -26,6 +28,7 @@ public class CoinFlip {
         break;
       case "--client":
         logger.info("Starting as a client.");
+        CoinFlipClient coinFlipClient = new CoinFlipClient(null);
         break;
       default:
         printUsageAndExit();

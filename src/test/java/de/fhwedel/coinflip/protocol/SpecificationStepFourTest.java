@@ -26,7 +26,7 @@ public class SpecificationStepFourTest extends AbstractProtocolSpecificationTest
     File file = new File("src/test/resources/protocol/specification/4.json");
     String jsonString = FileUtils.readFileToString(file);
     ProtocolParser parser = new ProtocolParser();
-    protocol = parser.parseJson(jsonString);
+    protocol = parser.parseJson(jsonString).get();
   }
 
   @Test

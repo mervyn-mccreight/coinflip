@@ -30,7 +30,7 @@ public class SpecificationStepThreeTest extends AbstractProtocolSpecificationTes
     File file = new File("src/test/resources/protocol/specification/3.json");
     String jsonString = FileUtils.readFileToString(file);
     ProtocolParser parser = new ProtocolParser();
-    protocol = parser.parseJson(jsonString);
+    protocol = parser.parseJson(jsonString).get();
   }
 
   @Test

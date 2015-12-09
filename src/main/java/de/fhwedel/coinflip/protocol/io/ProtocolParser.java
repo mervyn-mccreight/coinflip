@@ -3,6 +3,7 @@ package de.fhwedel.coinflip.protocol.io;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import com.google.gson.JsonSyntaxException;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolIdDeserializer;
@@ -10,6 +11,8 @@ import de.fhwedel.coinflip.protocol.model.id.ProtocolIdSerializer;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatusDeserializer;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatusSerializer;
+
+import java.util.Optional;
 
 public class ProtocolParser {
 
@@ -25,8 +28,12 @@ public class ProtocolParser {
     gson = gsonBuilder.create();
   }
 
-  public BaseProtocol parseJson(String jsonString) {
-    return gson.fromJson(jsonString, BaseProtocol.class);
+  public Optional<BaseProtocol> parseJson(String jsonString) {
+    try {
+      return Optional.ofNullable(gson.fromJson(jsonString, BaseProtocol.class));
+    } catch (JsonSyntaxException e) {
+      return Optional.empty();
+    }
   }
 
   public String toJson(BaseProtocol protocol) {

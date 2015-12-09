@@ -2,6 +2,7 @@ package de.fhwedel.coinflip.protocol.model;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -94,5 +95,25 @@ public class BaseProtocol {
 
   public List<BigInteger> getPrivateParametersForKeyB() {
     return this.payload.getKeyB();
+  }
+
+  public ProtocolId getId() {
+    return this.id;
+  }
+
+  public void addProposedVersions(Versions versions) {
+    this.protocolNegotiation.addAvailableVersion(versions);
+  }
+
+  public ProtocolNegotiation getProtocolNegotiation() {
+    return protocolNegotiation;
+  }
+
+  public void setChosenVersion(String chosenVersion) {
+    this.protocolNegotiation.setVersion(chosenVersion);
+  }
+
+  public void setProtocolId(ProtocolId protocolId) {
+    this.id = protocolId;
   }
 }

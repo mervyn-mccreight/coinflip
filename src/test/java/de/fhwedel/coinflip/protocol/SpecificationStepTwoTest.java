@@ -30,25 +30,25 @@ public class SpecificationStepTwoTest extends AbstractProtocolSpecificationTest 
 
   @Test
   public void getStep() throws Exception {
-    BaseProtocol baseProtocol = parser.parseJson(jsonString);
+    BaseProtocol baseProtocol = parser.parseJson(jsonString).get();
     assertProtocolStep(baseProtocol, ProtocolId.TWO);
   }
 
   @Test
   public void pAndQAreEmpty() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
     assertEmptyPandQ(protocol);
   }
 
   @Test
   public void getSid() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
     assertSid(protocol, 0);
   }
 
   @Test
   public void availableSids() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
 
     List<Sids> availableSids = protocol.getAvailableSids();
     assertThat(availableSids).hasSize(1);
@@ -60,7 +60,7 @@ public class SpecificationStepTwoTest extends AbstractProtocolSpecificationTest 
 
   @Test
   public void payloadIsEmpty() throws Exception {
-    BaseProtocol protocol = parser.parseJson(jsonString);
+    BaseProtocol protocol = parser.parseJson(jsonString).get();
     assertEmptyPayload(protocol);
   }
 }

@@ -1,15 +1,21 @@
 package de.fhwedel.coinflip.protocol.model;
 
-import java.util.List;
+import com.google.common.collect.Sets;
+
+import java.util.Set;
 
 public class Versions {
-  private List<String> versions;
+  private Set<String> versions;
 
-  private Versions(List<String> versions) {
+  private Versions(Set<String> versions) {
     this.versions = versions;
   }
 
-  public List<String> get() {
+  public static Versions containing(String... versionStrings) {
+    return new Versions(Sets.newHashSet(versionStrings));
+  }
+
+  public Set<String> get() {
     return this.versions;
   }
 

@@ -11,6 +11,10 @@ public class ProtocolNegotiation {
     this.availableVersions = availableVersions;
   }
 
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
   public String getNegotiatedVersion() {
     return this.version;
   }
@@ -19,4 +23,7 @@ public class ProtocolNegotiation {
     return this.availableVersions;
   }
 
+  public void addAvailableVersion(Versions versions) {
+    availableVersions.add(versions);
+  }
 }

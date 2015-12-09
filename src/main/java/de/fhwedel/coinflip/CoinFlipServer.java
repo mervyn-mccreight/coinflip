@@ -78,12 +78,10 @@ public class CoinFlipServer {
             return;
           }
 
-          BaseProtocol protocol = parser.parseJson(message);
-          Optional<BaseProtocol> answer = ProtocolHandler.work(protocol);
-
           String answerString =
-              parser.toJson(answer.orElseGet(() -> new BaseProtocol(ProtocolId.ERROR,
-                  ProtocolStatus.ERROR, ProtocolStatus.ERROR.getMessage(), null, null)));
+ parser.toJson(ProtocolHandler.work(parser.parseJson(message))
+              .orElseGet(() -> new BaseProtocol(ProtocolId.ERROR, ProtocolStatus.ERROR,
+                  ProtocolStatus.ERROR.getMessage(), null, null)));
 
           IOUtils.write(answerString + System.lineSeparator(), client.getOutputStream());
         } catch (IOException e) {
