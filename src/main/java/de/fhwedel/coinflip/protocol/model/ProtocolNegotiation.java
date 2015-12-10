@@ -6,7 +6,7 @@ public class ProtocolNegotiation {
   private String version;
   private List<Versions> availableVersions;
 
-  private ProtocolNegotiation(String version, List<Versions> availableVersions) {
+  public ProtocolNegotiation(String version, List<Versions> availableVersions) {
     this.version = version;
     this.availableVersions = availableVersions;
   }

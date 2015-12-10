@@ -6,18 +6,20 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.util.Optional;
+import java.util.List;
 import java.util.Scanner;
 
-import de.fhwedel.coinflip.protocol.ProtocolHandler;
-import de.fhwedel.coinflip.protocol.io.ProtocolParser;
-import de.fhwedel.coinflip.protocol.model.BaseProtocol;
-import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
-import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
+import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.net.DefaultSocketFactory;
 import org.apache.log4j.Logger;
+
+import de.fhwedel.coinflip.protocol.ProtocolHandler;
+import de.fhwedel.coinflip.protocol.io.ProtocolParser;
+import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public class CoinFlipServer {
   private final int port;
@@ -61,9 +63,12 @@ public class CoinFlipServer {
 
     @Override
     public void run() {
-      while (!client.isClosed() && running) {
-        try (InputStream inputStream = client.getInputStream()) {
+
+      try (InputStream inputStream = client.getInputStream()) {
+        while (!client.isClosed() && running) {
           Scanner scanner = new Scanner(inputStream);
+
+          // todo (10.12.2015): this breaks the server exit, if this is waiting forever.
           if (!scanner.hasNextLine()) {
             continue;
           }
@@ -78,16 +83,19 @@ public class CoinFlipServer {
             return;
           }
 
-          String answerString =
- parser.toJson(ProtocolHandler.work(parser.parseJson(message))
-              .orElseGet(() -> new BaseProtocol(ProtocolId.ERROR, ProtocolStatus.ERROR,
-                  ProtocolStatus.ERROR.getMessage(), null, null)));
+          String answerString = parser.toJson(ProtocolHandler.work(parser.parseJson(message))
+              .orElseGet(() -> new BaseProtocolBuilder().setId(ProtocolId.ERROR)
+                  .setStatus(ProtocolStatus.ERROR)
+                  .setStatusMessage(ProtocolStatus.ERROR.getMessage()).createBaseProtocol()));
+
+          logger.debug("Sending answer to client:");
+          logger.debug(answerString);
 
           IOUtils.write(answerString + System.lineSeparator(), client.getOutputStream());
-        } catch (IOException e) {
-          logger.error("Error in reading from client-sockets input stream. Aborting..", e);
-          throw new RuntimeException(e);
         }
+      } catch (IOException e) {
+        logger.error("Error in reading from client-sockets input stream. Aborting..", e);
+        throw new RuntimeException(e);
       }
       logger.info("Closing connection to: " + client.getInetAddress().toString());
     }
