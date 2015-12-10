@@ -1,16 +1,26 @@
 package de.fhwedel.coinflip;
 
+import de.fhwedel.coinflip.protocol.model.Sids;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import org.apache.log4j.Logger;
 
 import de.fhwedel.coinflip.protocol.model.Versions;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.security.Provider;
+import java.security.Security;
 
 public class CoinFlip {
 
   public static final Versions supportedVersions = Versions.containing("1.0");
+  public static Sids supportedSids =
+      Sids.containing(Sid.SRA1024SHA1, Sid.SRA2048SHA1, Sid.SRA3072SHA1);
 
   private static Logger logger = Logger.getLogger(CoinFlip.class);
 
   public static void main(String[] args) {
+    Security.addProvider(new BouncyCastleProvider());
+
     if (args.length != 2) {
       printUsageAndExit();
     }

@@ -1,21 +1,22 @@
 package de.fhwedel.coinflip.protocol;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.File;
 import java.math.BigInteger;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-import de.fhwedel.coinflip.protocol.model.Sids;
-import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Sets;
+
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
+import de.fhwedel.coinflip.protocol.model.Sids;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 
 public class SpecificationStepThreeTest extends AbstractProtocolSpecificationTest {
   private BaseProtocol protocol;
@@ -54,7 +55,7 @@ public class SpecificationStepThreeTest extends AbstractProtocolSpecificationTes
     List<Sids> availableSids = protocol.getAvailableSids();
     assertThat(availableSids).hasSize(2);
 
-    Sids expected = new Sids(Lists.newArrayList(Sid.SRA1024SHA1, Sid.SRA2048SHA1, Sid.SRA3072SHA1));
+    Sids expected = new Sids(Sets.newHashSet(Sid.SRA1024SHA1, Sid.SRA2048SHA1, Sid.SRA3072SHA1));
     Sids sids1 = availableSids.get(0);
     Sids sids2 = availableSids.get(1);
     assertThat(sids1).isEqualTo(expected);

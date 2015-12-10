@@ -6,10 +6,13 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.security.KeyPair;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.net.DefaultSocketFactory;
@@ -26,6 +29,8 @@ public class CoinFlipServer {
   private static final Logger logger = Logger.getLogger(CoinFlip.class);
   private static final String CLOSE_MESSAGE = "ABORT_SERVER";
   private boolean running = true;
+  private static final IdGenerator idGenerator = new IdGenerator();
+  public static final Map<Integer, KeyPair> keyMap = Maps.newHashMap();
 
   public CoinFlipServer(int port) {
     this.port = port;
@@ -52,13 +57,25 @@ public class CoinFlipServer {
     }
   }
 
+  private static class IdGenerator {
+    private int id = 0;
+
+    public int getNext() {
+      return this.id++;
+    }
+  }
+
   private class ConnectionHandler implements Runnable {
     private final Logger logger = Logger.getLogger(ConnectionHandler.class);
     private Socket client;
     private final ProtocolParser parser = new ProtocolParser();
+    private final int sessionId;
+    private final ProtocolHandler handler;
 
     public ConnectionHandler(Socket clientSocket) {
       this.client = clientSocket;
+      this.sessionId = idGenerator.getNext();
+      this.handler = new ProtocolHandler(sessionId);
     }
 
     @Override
@@ -83,7 +100,7 @@ public class CoinFlipServer {
             return;
           }
 
-          String answerString = parser.toJson(ProtocolHandler.work(parser.parseJson(message))
+          String answerString = parser.toJson(handler.work(parser.parseJson(message))
               .orElseGet(() -> new BaseProtocolBuilder().setId(ProtocolId.ERROR)
                   .setStatus(ProtocolStatus.ERROR)
                   .setStatusMessage(ProtocolStatus.ERROR.getMessage()).createBaseProtocol()));

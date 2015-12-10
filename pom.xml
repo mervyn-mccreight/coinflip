@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.github.timpauls</groupId>
             <artifactId>bc-java</artifactId>
-            <version>sra_1.0.3</version>
+            <version>sra_1.0.5</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
