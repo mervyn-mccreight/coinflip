@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.util.List;
 
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class SpecificationStepTwoTest extends AbstractProtocolSpecificationTest 
   @Test
   public void getSid() throws Exception {
     BaseProtocol protocol = parser.parseJson(jsonString).get();
-    assertSid(protocol, 0);
+    assertSid(protocol, Sid.SRA1024SHA1);
   }
 
   @Test
@@ -53,7 +54,7 @@ public class SpecificationStepTwoTest extends AbstractProtocolSpecificationTest 
     List<Sids> availableSids = protocol.getAvailableSids();
     assertThat(availableSids).hasSize(1);
 
-    Sids expected = new Sids(Lists.newArrayList(0, 1, 2));
+    Sids expected = new Sids(Lists.newArrayList(Sid.SRA1024SHA1, Sid.SRA2048SHA1, Sid.SRA3072SHA1));
     Sids sids = availableSids.get(0);
     assertThat(sids).isEqualTo(expected);
   }

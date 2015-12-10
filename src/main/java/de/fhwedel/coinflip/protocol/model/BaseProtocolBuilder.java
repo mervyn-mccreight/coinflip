@@ -1,8 +1,10 @@
 package de.fhwedel.coinflip.protocol.model;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public class BaseProtocolBuilder {
@@ -10,7 +12,7 @@ public class BaseProtocolBuilder {
   private ProtocolStatus status;
   private String statusMessage;
   private ProtocolNegotiationBuilder negotiationBuilder = new ProtocolNegotiationBuilder();
-  private KeyNegotiation keyNegotiation;
+  private KeyNegotiationBuilder keyNegotiationBuilder = new KeyNegotiationBuilder();
 
   public BaseProtocolBuilder setId(ProtocolId id) {
     this.id = id;
@@ -37,13 +39,25 @@ public class BaseProtocolBuilder {
     return this;
   }
 
-  public BaseProtocolBuilder setKeyNegotiation(KeyNegotiation keyNegotiation) {
-    this.keyNegotiation = keyNegotiation;
+  public BaseProtocolBuilder setChosenSid(Sid sid) {
+    keyNegotiationBuilder.setSid(sid);
+    return this;
+  }
+
+  public BaseProtocolBuilder setAvailableSids(List<Sids> newSids) {
+    keyNegotiationBuilder.setAvailableSids(newSids);
+    return this;
+  }
+
+  public BaseProtocolBuilder setPublicKeyParts(BigInteger p, BigInteger q) {
+    keyNegotiationBuilder.setP(p);
+    keyNegotiationBuilder.setQ(q);
     return this;
   }
 
   public BaseProtocol createBaseProtocol() {
     return new BaseProtocol(id, status, statusMessage,
-        negotiationBuilder.createProtocolNegotiation(), keyNegotiation);
+        negotiationBuilder.createProtocolNegotiation(),
+        keyNegotiationBuilder.createKeyNegotiation());
   }
 }

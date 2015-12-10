@@ -1,12 +1,14 @@
 package de.fhwedel.coinflip.protocol.model;
 
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
+
 import java.util.List;
 import java.util.Objects;
 
 public class Sids {
-  private List<Integer> sids;
+  private List<Sid> sids;
 
-  public Sids(List<Integer> sids) {
+  public Sids(List<Sid> sids) {
     this.sids = sids;
   }
 

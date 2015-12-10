@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 import java.math.BigInteger;
@@ -36,7 +37,7 @@ public abstract class AbstractProtocolSpecificationTest {
     assertThat(protocol.getQ()).isNull();
   }
 
-  public void assertSid(BaseProtocol protocol, int sid) {
+  public void assertSid(BaseProtocol protocol, Sid sid) {
     assertThat(protocol.getSid()).isEqualTo(sid);
   }
 

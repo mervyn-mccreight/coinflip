@@ -7,6 +7,7 @@ import java.util.Set;
 import com.google.gson.annotations.SerializedName;
 
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public class BaseProtocol {
@@ -61,7 +62,7 @@ public class BaseProtocol {
     return this.keyNegotiation.getQ();
   }
 
-  public int getSid() {
+  public Sid getSid() {
     return this.keyNegotiation.getSid();
   }
 
@@ -99,18 +100,6 @@ public class BaseProtocol {
 
   public ProtocolId getId() {
     return this.id;
-  }
-
-  public void addProposedVersions(Versions versions) {
-    this.protocolNegotiation.addAvailableVersion(versions);
-  }
-
-  public ProtocolNegotiation getProtocolNegotiation() {
-    return protocolNegotiation;
-  }
-
-  public void setChosenVersion(String chosenVersion) {
-    this.protocolNegotiation.setVersion(chosenVersion);
   }
 
   public void setProtocolId(ProtocolId protocolId) {

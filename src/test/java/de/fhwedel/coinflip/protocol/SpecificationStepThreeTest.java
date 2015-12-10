@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import de.fhwedel.coinflip.protocol.model.Sids;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class SpecificationStepThreeTest extends AbstractProtocolSpecificationTes
     List<Sids> availableSids = protocol.getAvailableSids();
     assertThat(availableSids).hasSize(2);
 
-    Sids expected = new Sids(Lists.newArrayList(0, 1, 2));
+    Sids expected = new Sids(Lists.newArrayList(Sid.SRA1024SHA1, Sid.SRA2048SHA1, Sid.SRA3072SHA1));
     Sids sids1 = availableSids.get(0);
     Sids sids2 = availableSids.get(1);
     assertThat(sids1).isEqualTo(expected);
