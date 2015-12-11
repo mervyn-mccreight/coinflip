@@ -5,10 +5,16 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.spec.InvalidKeySpecException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.crypto.Cipher;
 
 import org.bouncycastle.jcajce.provider.asymmetric.sra.SRADecryptionKeySpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -22,12 +28,6 @@ import de.fhwedel.coinflip.protocol.model.Versions;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
-import org.bouncycastle.util.encoders.Hex;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.xml.bind.DatatypeConverter;
 
 public class ProtocolHandler {
 
@@ -183,8 +183,7 @@ public class ProtocolHandler {
 
     Cipher engine;
     try {
-      engine =
- Cipher.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
+      engine = Cipher.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
     } catch (Exception e) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
           .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
