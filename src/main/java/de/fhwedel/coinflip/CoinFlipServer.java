@@ -102,8 +102,9 @@ public class CoinFlipServer {
 
           String answerString = parser.toJson(handler.work(parser.parseJson(message))
               .orElseGet(() -> new BaseProtocolBuilder().setId(ProtocolId.ERROR)
-                  .setStatus(ProtocolStatus.ERROR)
-                  .setStatusMessage(ProtocolStatus.ERROR.getMessage()).createBaseProtocol()));
+                  .setStatus(ProtocolStatus.UNKNOWN_PROTOCOL)
+                  .setStatusMessage(ProtocolStatus.UNKNOWN_PROTOCOL.getMessage())
+                  .createBaseProtocol()));
 
           logger.debug("Sending answer to client:");
           logger.debug(answerString);

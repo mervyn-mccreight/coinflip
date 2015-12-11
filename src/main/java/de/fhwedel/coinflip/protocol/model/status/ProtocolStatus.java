@@ -6,7 +6,8 @@ import java.util.Optional;
 import com.google.common.collect.Maps;
 
 public enum ProtocolStatus {
-  OK(0, "OK"), ERROR(10, "ERROR"), NO_VERSION(1, "NO_VERSION"), EXCEPTION(20, "SERVER-SIDE ERROR");
+  OK(0, "OK"), ERROR(10, "ERROR"), NO_VERSION(1, "NO_VERSION"), EXCEPTION(20,
+      "SERVER-SIDE ERROR"), UNKNOWN_PROTOCOL(30, "UNKNOWN_PROTOCOL_ID");
 
   private final int id;
   private final String message;
