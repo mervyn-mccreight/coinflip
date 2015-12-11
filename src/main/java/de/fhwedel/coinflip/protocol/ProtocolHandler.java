@@ -82,14 +82,10 @@ public class ProtocolHandler {
           .setProposedVersions(given.getProposedVersions()).createBaseProtocol();
     }
 
-    BaseProtocolBuilder builder = new BaseProtocolBuilder();
-
-    builder.setId(ProtocolId.ONE);
-    builder.setStatusMessage(ProtocolStatus.OK.getMessage());
-    builder.setStatus(ProtocolStatus.OK);
-    builder.setProposedVersions(newVersions);
-    builder.setChosenVersion(intersection.iterator().next());
-    return builder.createBaseProtocol();
+    String chosenVersion = intersection.iterator().next();
+    return new BaseProtocolBuilder().setId(ProtocolId.ONE).setStatus(ProtocolStatus.OK)
+        .setStatusMessage(ProtocolStatus.OK.getMessage()).setProposedVersions(newVersions)
+        .setChosenVersion(chosenVersion).createBaseProtocol();
   }
 
   private BaseProtocol handleProtocolStepTwo(BaseProtocol given) {
