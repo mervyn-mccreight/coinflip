@@ -111,6 +111,23 @@ public class ProtocolHandler {
           .setAvailableSids(given.getAvailableSids()).createBaseProtocol();
     }
 
+    Sid chosenSid = intersection.iterator().next();
+
+    KeyPair keyPair;
+    PublicKeyParts parts;
+    try {
+      // generate the key pair.
+      keyPair = KeyPairFactory.generateKeyPair(chosenSid.getModulus());
+      // fetch public parts of the key-pair to publish them.
+      parts = KeyDataExtractor.getPublicKeyParts(keyPair);
+    } catch (CipherException e) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
+    }
+
+    // store the key pair with a link to this session.
+    CoinFlipServer.keyMap.put(sessionId, keyPair);
+
     BaseProtocolBuilder builder = new BaseProtocolBuilder();
 
     builder.setChosenVersion(given.getNegotiatedVersion());
@@ -120,28 +137,9 @@ public class ProtocolHandler {
     builder.setId(ProtocolId.THREE);
 
     builder.setAvailableSids(newSids);
-    Sid chosenSid = intersection.iterator().next();
+
     builder.setChosenSid(chosenSid);
 
-    // generate the key pair.
-    KeyPair keyPair;
-    try {
-      keyPair = KeyPairFactory.generateKeyPair(chosenSid.getModulus());
-    } catch (CipherException e) {
-      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
-          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
-    }
-
-    // store the key pair with a link to this session.
-    CoinFlipServer.keyMap.put(sessionId, keyPair);
-
-    PublicKeyParts parts;
-    try {
-      parts = KeyDataExtractor.getPublicKeyParts(keyPair);
-    } catch (CipherException e) {
-      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
-          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
-    }
     builder.setPublicKeyParts(parts.getP(), parts.getQ());
     return builder.createBaseProtocol();
   }
