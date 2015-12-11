@@ -1,6 +1,5 @@
 package de.fhwedel.coinflip.protocol;
 
-import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -9,8 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import javax.crypto.Cipher;
 
 import org.bouncycastle.jcajce.provider.asymmetric.sra.SRADecryptionKeySpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -21,6 +18,8 @@ import com.google.common.collect.Sets;
 
 import de.fhwedel.coinflip.CoinFlip;
 import de.fhwedel.coinflip.CoinFlipServer;
+import de.fhwedel.coinflip.cipher.CryptoEngine;
+import de.fhwedel.coinflip.cipher.exception.CipherException;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
 import de.fhwedel.coinflip.protocol.model.Sids;
@@ -181,34 +180,17 @@ public class ProtocolHandler {
 
     String chosenCoinSide = chooseFrom.get(0);
 
-    Cipher engine;
-    try {
-      engine = Cipher.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
-    } catch (Exception e) {
-      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
-          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
-    }
-
     // prepare the engine for encryption
     KeyPair keyPair = CoinFlipServer.keyMap.get(sessionId);
 
+    String encryptedCoinSide;
     try {
-      engine.init(Cipher.ENCRYPT_MODE, keyPair.getPublic());
-    } catch (InvalidKeyException e) {
+      encryptedCoinSide =
+          CryptoEngine.encrypt(Hex.decode(chosenCoinSide), "SRA", keyPair.getPublic());
+    } catch (CipherException e) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
           .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
     }
-
-    byte[] cipher;
-    // encrypt something.
-    try {
-      cipher = engine.doFinal(Hex.decode(chosenCoinSide));
-    } catch (Exception e) {
-      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
-          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
-    }
-
-    String encryptedCoinSide = Hex.toHexString(cipher);
 
     BaseProtocolBuilder builder = new BaseProtocolBuilder();
 
