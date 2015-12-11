@@ -7,16 +7,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.net.DefaultSocketFactory;
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Maps;
 
 import de.fhwedel.coinflip.protocol.ProtocolHandler;
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
@@ -102,9 +101,7 @@ public class CoinFlipServer {
 
           String answerString = parser.toJson(handler.work(parser.parseJson(message))
               .orElseGet(() -> new BaseProtocolBuilder().setId(ProtocolId.ERROR)
-                  .setStatus(ProtocolStatus.UNKNOWN_PROTOCOL)
-                  .setStatusMessage(ProtocolStatus.UNKNOWN_PROTOCOL.getMessage())
-                  .createBaseProtocol()));
+                  .setStatus(ProtocolStatus.UNKNOWN_PROTOCOL).createBaseProtocol()));
 
           logger.debug("Sending answer to client:");
           logger.debug(answerString);

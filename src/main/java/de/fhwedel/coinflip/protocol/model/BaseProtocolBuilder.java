@@ -22,11 +22,7 @@ public class BaseProtocolBuilder {
 
   public BaseProtocolBuilder setStatus(ProtocolStatus status) {
     this.status = status;
-    return this;
-  }
-
-  public BaseProtocolBuilder setStatusMessage(String statusMessage) {
-    this.statusMessage = statusMessage;
+    this.statusMessage = status.getMessage();
     return this;
   }
 

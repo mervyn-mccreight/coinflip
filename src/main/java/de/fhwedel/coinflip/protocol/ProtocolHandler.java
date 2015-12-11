@@ -67,7 +67,7 @@ public class ProtocolHandler {
 
     if (proposed.isEmpty() || proposed == null) {
       return new BaseProtocolBuilder().setId(ProtocolId.ZERO).setStatus(ProtocolStatus.NO_VERSION)
-          .setStatusMessage(ProtocolStatus.NO_VERSION.getMessage()).createBaseProtocol();
+          .createBaseProtocol();
     }
 
     List<Versions> newVersions = Lists.newArrayList(proposed);
@@ -78,14 +78,13 @@ public class ProtocolHandler {
 
     if (intersection.isEmpty()) {
       return new BaseProtocolBuilder().setId(ProtocolId.ZERO).setStatus(ProtocolStatus.NO_VERSION)
-          .setStatusMessage(ProtocolStatus.NO_VERSION.getMessage())
-          .setProposedVersions(given.getProposedVersions()).createBaseProtocol();
+
+      .setProposedVersions(given.getProposedVersions()).createBaseProtocol();
     }
 
     String chosenVersion = intersection.iterator().next();
     return new BaseProtocolBuilder().setId(ProtocolId.ONE).setStatus(ProtocolStatus.OK)
-        .setStatusMessage(ProtocolStatus.OK.getMessage()).setProposedVersions(newVersions)
-        .setChosenVersion(chosenVersion).createBaseProtocol();
+        .setProposedVersions(newVersions).setChosenVersion(chosenVersion).createBaseProtocol();
   }
 
   private BaseProtocol handleProtocolStepTwo(BaseProtocol given) {
@@ -93,7 +92,7 @@ public class ProtocolHandler {
 
     if (proposed.isEmpty() || proposed == null) {
       return new BaseProtocolBuilder().setId(ProtocolId.TWO).setStatus(ProtocolStatus.ERROR)
-          .setStatusMessage(ProtocolStatus.ERROR.getMessage()).createBaseProtocol();
+          .createBaseProtocol();
     }
 
     List<Sids> newSids = Lists.newArrayList(proposed);
@@ -103,8 +102,8 @@ public class ProtocolHandler {
 
     if (intersection.isEmpty()) {
       return new BaseProtocolBuilder().setId(ProtocolId.TWO).setStatus(ProtocolStatus.ERROR)
-          .setStatusMessage(ProtocolStatus.ERROR.getMessage())
-          .setAvailableSids(given.getAvailableSids()).createBaseProtocol();
+
+      .setAvailableSids(given.getAvailableSids()).createBaseProtocol();
     }
 
     Sid chosenSid = intersection.iterator().next();
@@ -118,7 +117,7 @@ public class ProtocolHandler {
       parts = KeyDataExtractor.getPublicKeyParts(keyPair);
     } catch (CipherException e) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
-          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
+          .createBaseProtocol();
     }
 
     // store the key pair with a link to this session.
@@ -128,7 +127,6 @@ public class ProtocolHandler {
 
     builder.setChosenVersion(given.getNegotiatedVersion());
     builder.setProposedVersions(given.getProposedVersions());
-    builder.setStatusMessage(ProtocolStatus.OK.getMessage());
     builder.setStatus(ProtocolStatus.OK);
     builder.setId(ProtocolId.THREE);
 
@@ -145,7 +143,7 @@ public class ProtocolHandler {
 
     if (encryptedCoin.size() != 2) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.ERROR)
-          .setStatusMessage(ProtocolStatus.ERROR.getMessage()).createBaseProtocol();
+          .createBaseProtocol();
     }
 
     List<String> chooseFrom = Lists.newArrayList(encryptedCoin);
@@ -162,14 +160,13 @@ public class ProtocolHandler {
           CryptoEngine.encrypt(Hex.decode(chosenCoinSide), "SRA", keyPair.getPublic());
     } catch (CipherException e) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
-          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
+          .createBaseProtocol();
     }
 
     BaseProtocolBuilder builder = new BaseProtocolBuilder();
 
     builder.setId(ProtocolId.FIVE);
     builder.setStatus(ProtocolStatus.OK);
-    builder.setStatusMessage(ProtocolStatus.OK.getMessage());
 
     builder.setChosenVersion(given.getNegotiatedVersion());
     builder.setProposedVersions(given.getProposedVersions());
@@ -187,7 +184,7 @@ public class ProtocolHandler {
 
     if (plainCoin.size() != 2) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.ERROR)
-          .setStatusMessage(ProtocolStatus.ERROR.getMessage()).createBaseProtocol();
+          .createBaseProtocol();
     }
 
     List<String> coin = Lists.newArrayList(plainCoin);
