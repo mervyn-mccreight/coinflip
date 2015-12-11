@@ -183,9 +183,8 @@ public class ProtocolHandler {
 
     Cipher engine;
     try {
-      // todo (11.12.2015): obv. we are not using padding at further encryption? dunno ...
       engine =
-          Cipher.getInstance(given.getSid().getAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
+ Cipher.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
     } catch (Exception e) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
           .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
