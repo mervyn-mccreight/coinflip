@@ -123,19 +123,10 @@ public class ProtocolHandler {
     // store the key pair with a link to this session.
     CoinFlipServer.keyMap.put(sessionId, keyPair);
 
-    BaseProtocolBuilder builder = new BaseProtocolBuilder();
-
-    builder.setChosenVersion(given.getNegotiatedVersion());
-    builder.setProposedVersions(given.getProposedVersions());
-    builder.setStatus(ProtocolStatus.OK);
-    builder.setId(ProtocolId.THREE);
-
-    builder.setAvailableSids(newSids);
-
-    builder.setChosenSid(chosenSid);
-
-    builder.setPublicKeyParts(parts.getP(), parts.getQ());
-    return builder.createBaseProtocol();
+    return new BaseProtocolBuilder().setChosenVersion(given.getNegotiatedVersion())
+        .setProposedVersions(given.getProposedVersions()).setStatus(ProtocolStatus.OK)
+        .setId(ProtocolId.THREE).setAvailableSids(newSids).setChosenSid(chosenSid)
+        .setPublicKeyParts(parts.getP(), parts.getQ()).createBaseProtocol();
   }
 
   private BaseProtocol handleProtocolStepFour(BaseProtocol given) {
