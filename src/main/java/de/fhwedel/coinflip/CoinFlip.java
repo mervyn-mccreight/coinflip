@@ -14,7 +14,8 @@ public class CoinFlip {
 
   public static final Versions supportedVersions = Versions.containing("1.0");
   public static Sids supportedSids =
-      Sids.containing(Sid.SRA1024SHA1, Sid.SRA2048SHA1, Sid.SRA3072SHA1);
+ Sids.containing(Sid.SRA1024SHA1, Sid.SRA2048SHA1,
+      Sid.SRA3072SHA1, Sid.SRA1024SHA256, Sid.SRA2048SHA512);
 
   private static Logger logger = Logger.getLogger(CoinFlip.class);
 

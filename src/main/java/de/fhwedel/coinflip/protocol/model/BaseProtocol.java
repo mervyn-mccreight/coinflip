@@ -26,12 +26,13 @@ public class BaseProtocol {
   private Payload payload;
 
   public BaseProtocol(ProtocolId id, ProtocolStatus status, String statusMessage,
-      ProtocolNegotiation protocolNegotiation, KeyNegotiation keyNegotiation) {
+      ProtocolNegotiation protocolNegotiation, KeyNegotiation keyNegotiation, Payload payload) {
     this.id = id;
     this.status = status;
     this.statusMessage = statusMessage;
     this.protocolNegotiation = protocolNegotiation;
     this.keyNegotiation = keyNegotiation;
+    this.payload = payload;
   }
 
   public int getStep() {

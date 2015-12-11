@@ -13,6 +13,7 @@ public class BaseProtocolBuilder {
   private String statusMessage;
   private ProtocolNegotiationBuilder negotiationBuilder = new ProtocolNegotiationBuilder();
   private KeyNegotiationBuilder keyNegotiationBuilder = new KeyNegotiationBuilder();
+  private PayloadBuilder payloadBuilder = new PayloadBuilder();
 
   public BaseProtocolBuilder setId(ProtocolId id) {
     this.id = id;
@@ -55,9 +56,44 @@ public class BaseProtocolBuilder {
     return this;
   }
 
+  public BaseProtocolBuilder setInitialCoin(List<String> coin) {
+    payloadBuilder.setInitialCoin(coin);
+    return this;
+  }
+
+  public BaseProtocolBuilder setEncryptedCoin(List<String> coin) {
+    payloadBuilder.setEncryptedCoin(coin);
+    return this;
+  }
+
+  public BaseProtocolBuilder setDesiredCoin(String coin) {
+    payloadBuilder.setDesiredCoin(coin);
+    return this;
+  }
+
+  public BaseProtocolBuilder setEnChosenCoin(String coin) {
+    payloadBuilder.setEnChosenCoin(coin);
+    return this;
+  }
+
+  public BaseProtocolBuilder setDeChosenCoin(String coin) {
+    payloadBuilder.setDeChosenCoin(coin);
+    return this;
+  }
+
+  public BaseProtocolBuilder setKeyA(List<BigInteger> key) {
+    payloadBuilder.setKeyA(key);
+    return this;
+  }
+
+  public BaseProtocolBuilder setKeyB(List<BigInteger> key) {
+    payloadBuilder.setKeyB(key);
+    return this;
+  }
+
   public BaseProtocol createBaseProtocol() {
     return new BaseProtocol(id, status, statusMessage,
         negotiationBuilder.createProtocolNegotiation(),
-        keyNegotiationBuilder.createKeyNegotiation());
+        keyNegotiationBuilder.createKeyNegotiation(), payloadBuilder.createPayload());
   }
 }

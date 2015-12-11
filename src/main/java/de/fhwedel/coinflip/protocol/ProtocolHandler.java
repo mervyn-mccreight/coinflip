@@ -1,10 +1,14 @@
 package de.fhwedel.coinflip.protocol;
 
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.spec.InvalidKeySpecException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
+import org.bouncycastle.jcajce.provider.asymmetric.sra.SRADecryptionKeySpec;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -18,8 +22,12 @@ import de.fhwedel.coinflip.protocol.model.Versions;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
-import org.bouncycastle.jcajce.provider.asymmetric.sra.SRADecryptionKeySpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.xml.bind.DatatypeConverter;
 
 public class ProtocolHandler {
 
@@ -42,7 +50,7 @@ public class ProtocolHandler {
         case THREE:
           break;
         case FOUR:
-          break;
+          return Optional.ofNullable(handleProtocolStepFour(baseProtocol));
         case FIVE:
           break;
         case SIX:
@@ -55,6 +63,36 @@ public class ProtocolHandler {
     }
 
     return Optional.empty();
+  }
+
+  private BaseProtocol handleProtocolStepZero(BaseProtocol given) {
+    List<Versions> proposed = given.getProposedVersions();
+
+    if (proposed.isEmpty() || proposed == null) {
+      return new BaseProtocolBuilder().setId(ProtocolId.ZERO).setStatus(ProtocolStatus.NO_VERSION)
+          .setStatusMessage(ProtocolStatus.NO_VERSION.getMessage()).createBaseProtocol();
+    }
+
+    List<Versions> newVersions = Lists.newArrayList(proposed);
+    newVersions.add(CoinFlip.supportedVersions);
+
+    Set<String> intersection =
+        Sets.intersection(newVersions.get(0).get(), newVersions.get(1).get());
+
+    if (intersection.isEmpty()) {
+      return new BaseProtocolBuilder().setId(ProtocolId.ZERO).setStatus(ProtocolStatus.NO_VERSION)
+          .setStatusMessage(ProtocolStatus.NO_VERSION.getMessage())
+          .setProposedVersions(given.getProposedVersions()).createBaseProtocol();
+    }
+
+    BaseProtocolBuilder builder = new BaseProtocolBuilder();
+
+    builder.setId(ProtocolId.ONE);
+    builder.setStatusMessage(ProtocolStatus.OK.getMessage());
+    builder.setStatus(ProtocolStatus.OK);
+    builder.setProposedVersions(newVersions);
+    builder.setChosenVersion(intersection.iterator().next());
+    return builder.createBaseProtocol();
   }
 
   private BaseProtocol handleProtocolStepTwo(BaseProtocol given) {
@@ -93,7 +131,8 @@ public class ProtocolHandler {
     try {
       generator = KeyPairGenerator.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
     }
 
     // provide a bit-size for the key (1024-bit key in this example).
@@ -108,7 +147,8 @@ public class ProtocolHandler {
     try {
       factory = KeyFactory.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
     }
 
     // extract p and q. you have to use the private key for this, since only the private key
@@ -119,7 +159,8 @@ public class ProtocolHandler {
     try {
       spec = factory.getKeySpec(keyPair.getPrivate(), SRADecryptionKeySpec.class);
     } catch (InvalidKeySpecException e) {
-      throw new RuntimeException(e);
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
     }
 
     builder.setPublicKeyParts(spec.getP(), spec.getQ());
@@ -127,33 +168,80 @@ public class ProtocolHandler {
     return builder.createBaseProtocol();
   }
 
-  private BaseProtocol handleProtocolStepZero(BaseProtocol given) {
-    List<Versions> proposed = given.getProposedVersions();
+  private BaseProtocol handleProtocolStepFour(BaseProtocol given) {
+    List<String> encryptedCoin = given.getEncryptedCoin();
 
-    if (proposed.isEmpty() || proposed == null) {
-      return new BaseProtocolBuilder().setId(ProtocolId.ZERO).setStatus(ProtocolStatus.NO_VERSION)
-          .setStatusMessage(ProtocolStatus.NO_VERSION.getMessage()).createBaseProtocol();
+    if (encryptedCoin.size() != 2) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.ERROR)
+          .setStatusMessage(ProtocolStatus.ERROR.getMessage()).createBaseProtocol();
     }
 
-    List<Versions> newVersions = Lists.newArrayList(proposed);
-    newVersions.add(CoinFlip.supportedVersions);
+    List<String> chooseFrom = Lists.newArrayList(encryptedCoin);
+    Collections.shuffle(chooseFrom);
 
-    Set<String> intersection =
-        Sets.intersection(newVersions.get(0).get(), newVersions.get(1).get());
+    String chosenCoinSide = chooseFrom.get(0);
 
-    if (intersection.isEmpty()) {
-      return new BaseProtocolBuilder().setId(ProtocolId.ZERO).setStatus(ProtocolStatus.NO_VERSION)
-          .setStatusMessage(ProtocolStatus.NO_VERSION.getMessage())
-          .setProposedVersions(given.getProposedVersions()).createBaseProtocol();
+    Cipher engine;
+    try {
+      // todo (11.12.2015): obv. we are not using padding at further encryption? dunno ...
+      engine =
+          Cipher.getInstance(given.getSid().getAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
+    } catch (Exception e) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
     }
+
+    // prepare the engine for encryption
+    KeyPair keyPair = CoinFlipServer.keyMap.get(sessionId);
+
+    try {
+      engine.init(Cipher.ENCRYPT_MODE, keyPair.getPublic());
+    } catch (InvalidKeyException e) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
+    }
+
+    byte[] cipher;
+    // encrypt something.
+    try {
+      cipher = engine.doFinal(Hex.decode(chosenCoinSide));
+    } catch (Exception e) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
+    }
+
+    String encryptedCoinSide = Hex.toHexString(cipher);
 
     BaseProtocolBuilder builder = new BaseProtocolBuilder();
 
-    builder.setId(ProtocolId.ONE);
-    builder.setStatusMessage(ProtocolStatus.OK.getMessage());
+    builder.setId(ProtocolId.FIVE);
     builder.setStatus(ProtocolStatus.OK);
-    builder.setProposedVersions(newVersions);
-    builder.setChosenVersion(intersection.iterator().next());
+    builder.setStatusMessage(ProtocolStatus.OK.getMessage());
+
+    builder.setChosenVersion(given.getNegotiatedVersion());
+    builder.setProposedVersions(given.getProposedVersions());
+
+    builder.setAvailableSids(given.getAvailableSids());
+    builder.setChosenSid(given.getSid());
+    builder.setPublicKeyParts(given.getP(), given.getQ());
+
+    builder.setInitialCoin(given.getPlainCoin());
+    builder.setEncryptedCoin(given.getEncryptedCoin());
+
+    builder.setEnChosenCoin(encryptedCoinSide);
+
+    List<String> plainCoin = given.getPlainCoin();
+
+    if (plainCoin.size() != 2) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.ERROR)
+          .setStatusMessage(ProtocolStatus.ERROR.getMessage()).createBaseProtocol();
+    }
+
+    List<String> coin = Lists.newArrayList(plainCoin);
+    Collections.shuffle(coin);
+
+    builder.setDesiredCoin(coin.get(0));
+
     return builder.createBaseProtocol();
   }
 }
