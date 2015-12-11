@@ -38,6 +38,7 @@ public class CoinFlipServer {
   public void start() {
     DefaultSocketFactory factory = new DefaultSocketFactory();
     try (ServerSocket serverSocket = factory.createServerSocket(port)) {
+      // todo (11.12.2015): implement silent mode, where this thread will not be started.
       new Thread(new KeyboardListener()).start();
 
       logger.debug("Started server at: " + serverSocket.toString());
