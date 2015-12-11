@@ -1,16 +1,11 @@
 package de.fhwedel.coinflip.protocol;
 
-import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.bouncycastle.jcajce.provider.asymmetric.sra.SRADecryptionKeySpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 
 import com.google.common.collect.Lists;
@@ -19,6 +14,9 @@ import com.google.common.collect.Sets;
 import de.fhwedel.coinflip.CoinFlip;
 import de.fhwedel.coinflip.CoinFlipServer;
 import de.fhwedel.coinflip.cipher.CryptoEngine;
+import de.fhwedel.coinflip.cipher.KeyDataExtractor;
+import de.fhwedel.coinflip.cipher.KeyPairFactory;
+import de.fhwedel.coinflip.cipher.PublicKeyParts;
 import de.fhwedel.coinflip.cipher.exception.CipherException;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
@@ -125,45 +123,26 @@ public class ProtocolHandler {
     Sid chosenSid = intersection.iterator().next();
     builder.setChosenSid(chosenSid);
 
-    // first get the sra key pair generator instance.
-    KeyPairGenerator generator;
+    // generate the key pair.
+    KeyPair keyPair;
     try {
-      generator = KeyPairGenerator.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
-    } catch (Exception e) {
+      keyPair = KeyPairFactory.generateKeyPair(chosenSid.getModulus());
+    } catch (CipherException e) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
           .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
     }
 
-    // provide a bit-size for the key (1024-bit key in this example).
-    generator.initialize(chosenSid.getModulus());
-
-    // generate the key pair.
-    KeyPair keyPair = generator.generateKeyPair();
+    // store the key pair with a link to this session.
     CoinFlipServer.keyMap.put(sessionId, keyPair);
 
-    // get a key factory instance for SRA
-    KeyFactory factory;
+    PublicKeyParts parts;
     try {
-      factory = KeyFactory.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
-    } catch (Exception e) {
+      parts = KeyDataExtractor.getPublicKeyParts(keyPair);
+    } catch (CipherException e) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
           .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
     }
-
-    // extract p and q. you have to use the private key for this, since only the private key
-    // contains the information.
-    // the key factory fetches the hidden information out of the private key and fills a
-    // SRADecryptionKeySpec to provide the information.
-    SRADecryptionKeySpec spec;
-    try {
-      spec = factory.getKeySpec(keyPair.getPrivate(), SRADecryptionKeySpec.class);
-    } catch (InvalidKeySpecException e) {
-      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
-          .setStatusMessage(ProtocolStatus.EXCEPTION.getMessage()).createBaseProtocol();
-    }
-
-    builder.setPublicKeyParts(spec.getP(), spec.getQ());
-
+    builder.setPublicKeyParts(parts.getP(), parts.getQ());
     return builder.createBaseProtocol();
   }
 
