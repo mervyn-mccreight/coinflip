@@ -154,23 +154,6 @@ public class ProtocolHandler {
           .createBaseProtocol();
     }
 
-    BaseProtocolBuilder builder = new BaseProtocolBuilder();
-
-    builder.setId(ProtocolId.FIVE);
-    builder.setStatus(ProtocolStatus.OK);
-
-    builder.setChosenVersion(given.getNegotiatedVersion());
-    builder.setProposedVersions(given.getProposedVersions());
-
-    builder.setAvailableSids(given.getAvailableSids());
-    builder.setChosenSid(given.getSid());
-    builder.setPublicKeyParts(given.getP(), given.getQ());
-
-    builder.setInitialCoin(given.getPlainCoin());
-    builder.setEncryptedCoin(given.getEncryptedCoin());
-
-    builder.setEnChosenCoin(encryptedCoinSide);
-
     List<String> plainCoin = given.getPlainCoin();
 
     if (plainCoin.size() != 2) {
@@ -181,8 +164,11 @@ public class ProtocolHandler {
     List<String> coin = Lists.newArrayList(plainCoin);
     Collections.shuffle(coin);
 
-    builder.setDesiredCoin(coin.get(0));
-
-    return builder.createBaseProtocol();
+    return new BaseProtocolBuilder().setId(ProtocolId.FIVE).setStatus(ProtocolStatus.OK)
+        .setChosenVersion(given.getNegotiatedVersion())
+        .setProposedVersions(given.getProposedVersions()).setAvailableSids(given.getAvailableSids())
+        .setChosenSid(given.getSid()).setPublicKeyParts(given.getP(), given.getQ())
+        .setInitialCoin(given.getPlainCoin()).setEncryptedCoin(given.getEncryptedCoin())
+        .setEnChosenCoin(encryptedCoinSide).setDesiredCoin(coin.get(0)).createBaseProtocol();
   }
 }
