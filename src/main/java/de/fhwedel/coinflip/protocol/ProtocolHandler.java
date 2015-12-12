@@ -78,8 +78,7 @@ public class ProtocolHandler {
 
     if (intersection.isEmpty()) {
       return new BaseProtocolBuilder().setId(ProtocolId.ZERO).setStatus(ProtocolStatus.NO_VERSION)
-
-      .setProposedVersions(given.getProposedVersions()).createBaseProtocol();
+          .setProposedVersions(given.getProposedVersions()).createBaseProtocol();
     }
 
     String chosenVersion = intersection.iterator().next();
