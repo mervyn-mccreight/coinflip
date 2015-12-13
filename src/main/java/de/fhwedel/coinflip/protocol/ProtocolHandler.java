@@ -1,5 +1,6 @@
 package de.fhwedel.coinflip.protocol;
 
+import java.math.BigInteger;
 import java.security.KeyPair;
 import java.util.Collections;
 import java.util.List;
@@ -13,10 +14,7 @@ import com.google.common.collect.Sets;
 
 import de.fhwedel.coinflip.CoinFlip;
 import de.fhwedel.coinflip.CoinFlipServer;
-import de.fhwedel.coinflip.cipher.CryptoEngine;
-import de.fhwedel.coinflip.cipher.KeyDataExtractor;
-import de.fhwedel.coinflip.cipher.KeyPairFactory;
-import de.fhwedel.coinflip.cipher.PublicKeyParts;
+import de.fhwedel.coinflip.cipher.*;
 import de.fhwedel.coinflip.cipher.exception.CipherException;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
@@ -51,7 +49,7 @@ public class ProtocolHandler {
         case FIVE:
           break;
         case SIX:
-          break;
+          return Optional.ofNullable(handleProtocolStepSix(baseProtocol));
         case SEVEN:
           break;
         case ERROR:
@@ -60,6 +58,35 @@ public class ProtocolHandler {
     }
 
     return Optional.empty();
+  }
+
+  private BaseProtocol handleProtocolStepSix(BaseProtocol given) {
+
+    List<BigInteger> privateParametersForKeyA = given.getPrivateParametersForKeyA();
+    if (privateParametersForKeyA.isEmpty()) {
+      return new BaseProtocolBuilder().setId(ProtocolId.SIX).setStatus(ProtocolStatus.NO_KEY)
+          .createBaseProtocol();
+    }
+
+    // todo (13.12.2015): implement protocol verification with given key from client.
+
+    KeyPair keyPair = CoinFlipServer.keyMap.get(sessionId);
+    PrivateKeyParts privateParts;
+    try {
+      privateParts = KeyDataExtractor.getPrivateParts(keyPair);
+    } catch (CipherException e) {
+      return new BaseProtocolBuilder().setId(ProtocolId.SIX).setStatus(ProtocolStatus.EXCEPTION)
+          .createBaseProtocol();
+    }
+
+    return new BaseProtocolBuilder().setId(ProtocolId.SEVEN).setStatus(ProtocolStatus.OK)
+        .setChosenVersion(given.getNegotiatedVersion())
+        .setProposedVersions(given.getProposedVersions()).setChosenSid(given.getSid())
+        .setAvailableSids(given.getAvailableSids()).setInitialCoin(given.getPlainCoin())
+        .setDesiredCoin(given.getDesiredCoinSide()).setEnChosenCoin(given.getEncryptedChosenCoin())
+        .setDeChosenCoin(given.getDecryptedChosenCoin())
+        .setKeyA(given.getPrivateParametersForKeyA())
+        .setKeyB(Lists.newArrayList(privateParts.getE(), privateParts.getD())).createBaseProtocol();
   }
 
   private BaseProtocol handleProtocolStepZero(BaseProtocol given) {
