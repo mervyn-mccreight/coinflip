@@ -54,4 +54,24 @@ public class ServerProtocolHandlerTest {
     assertThat(realOutput.getStatus()).isEqualTo(ProtocolStatus.OK.getId());
     assertThat(realOutput.getStatusMessage()).isEqualTo(ProtocolStatus.OK.getMessage());
   }
+
+  @Test
+  public void validStepTwo_noError_returnsValidStepThree() throws Exception {
+    // todo (15.12.2015): implement
+  }
+
+  @Test
+  public void validStepFour_noError_returnsValidStepFive() throws Exception {
+    // todo (15.12.2015): implement
+  }
+
+  @Test
+  public void validStepSix_noError_returnsValidStepSeven() throws Exception {
+    // todo (15.12.2015): implement
+  }
+
+  // todo (15.12.2015): test error cases!
+
+  // todo (15.12.2015): write test for https://github.com/mervyn-mccreight/coinflip/issues/1.
+  // fix the problem.
 }
