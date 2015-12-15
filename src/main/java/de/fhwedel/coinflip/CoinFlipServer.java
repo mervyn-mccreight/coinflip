@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Maps;
 
 import de.fhwedel.coinflip.protocol.ProtocolHandler;
+import de.fhwedel.coinflip.protocol.ServerProtocolHandler;
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
 
 public class CoinFlipServer {
@@ -72,7 +73,7 @@ public class CoinFlipServer {
     public ConnectionHandler(Socket clientSocket) {
       this.client = clientSocket;
       this.sessionId = idGenerator.getNext();
-      this.handler = new ProtocolHandler(sessionId);
+      this.handler = new ServerProtocolHandler(sessionId);
     }
 
     @Override
