@@ -19,9 +19,6 @@ import com.google.common.collect.Maps;
 
 import de.fhwedel.coinflip.protocol.ProtocolHandler;
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
-import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
-import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
-import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public class CoinFlipServer {
   private final int port;
@@ -101,8 +98,7 @@ public class CoinFlipServer {
           }
 
           String answerString = parser.toJson(handler.work(parser.parseJson(message))
-              .orElseGet(() -> new BaseProtocolBuilder().setId(ProtocolId.ERROR)
-                  .setStatus(ProtocolStatus.UNKNOWN_PROTOCOL).createBaseProtocol()));
+.orElseThrow(UnknownProtocolException::new));
 
           logger.debug("Sending answer to client:");
           logger.debug(answerString);
@@ -112,8 +108,16 @@ public class CoinFlipServer {
       } catch (IOException e) {
         logger.error("Error in reading from client-sockets input stream. Aborting..", e);
         throw new RuntimeException(e);
+      } catch (UnknownProtocolException e) {
+        logger.info("Retrieved unknown protocol.");
       }
       logger.info("Closing connection to: " + client.getInetAddress().toString());
+      unregisterKeyPair();
+    }
+
+    private void unregisterKeyPair() {
+      logger.debug("Unregistering KeyPair for sessionId " + sessionId);
+      keyMap.remove(sessionId);
     }
   }
 

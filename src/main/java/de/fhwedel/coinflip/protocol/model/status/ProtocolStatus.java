@@ -7,7 +7,8 @@ import com.google.common.collect.Maps;
 
 public enum ProtocolStatus {
   OK(0, "OK"), ERROR(10, "ERROR"), NO_VERSION(1, "NO_VERSION"), EXCEPTION(20,
-      "SERVER-SIDE ERROR"), UNKNOWN_PROTOCOL(30, "UNKNOWN_PROTOCOL_ID"), NO_KEY(40, "NO_KEY_GIVEN");
+      "SERVER-SIDE ERROR"), UNKNOWN_PROTOCOL(30, "UNKNOWN_PROTOCOL_ID"), NO_KEY(40,
+          "NO_KEY_GIVEN"), UNEXPECTED_ID(41, "UNEXPECTED_PROTOCOL_ID GIVEN");
 
   private final int id;
   private final String message;

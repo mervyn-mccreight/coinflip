@@ -37,23 +37,24 @@ public class ProtocolHandler {
       BaseProtocol baseProtocol = protocol.get();
       switch (baseProtocol.getId()) {
         case ZERO:
-          return Optional.ofNullable(handleProtocolStepZero(baseProtocol));
-        case ONE:
-          break;
+          return Optional.of(handleProtocolStepZero(baseProtocol));
         case TWO:
-          return Optional.ofNullable(handleProtocolStepTwo(baseProtocol));
-        case THREE:
-          break;
+          return Optional.of(handleProtocolStepTwo(baseProtocol));
         case FOUR:
-          return Optional.ofNullable(handleProtocolStepFour(baseProtocol));
-        case FIVE:
-          break;
+          return Optional.of(handleProtocolStepFour(baseProtocol));
         case SIX:
-          return Optional.ofNullable(handleProtocolStepSix(baseProtocol));
-        case SEVEN:
-          break;
+          return Optional.of(handleProtocolStepSix(baseProtocol));
         case ERROR:
-          break;
+          return Optional.empty();
+        case ONE:
+        case THREE:
+        case FIVE:
+        case SEVEN:
+          return Optional.of(new BaseProtocolBuilder().setId(ProtocolId.ERROR)
+              .setStatus(ProtocolStatus.UNEXPECTED_ID).createBaseProtocol());
+        default:
+          return Optional.of(new BaseProtocolBuilder().setId(ProtocolId.ERROR)
+              .setStatus(ProtocolStatus.UNKNOWN_PROTOCOL).createBaseProtocol());
       }
     }
 
