@@ -97,8 +97,8 @@ public class CoinFlipServer {
             return;
           }
 
-          String answerString = parser.toJson(handler.work(parser.parseJson(message))
-.orElseThrow(UnknownProtocolException::new));
+          String answerString = parser.toJson(
+              handler.work(parser.parseJson(message)).orElseThrow(UnknownProtocolException::new));
 
           logger.debug("Sending answer to client:");
           logger.debug(answerString);
