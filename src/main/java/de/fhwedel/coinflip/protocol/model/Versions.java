@@ -1,8 +1,9 @@
 package de.fhwedel.coinflip.protocol.model;
 
-import com.google.common.collect.Sets;
-
 import java.util.Set;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 public class Versions {
   private Set<String> versions;
@@ -21,5 +22,21 @@ public class Versions {
 
   public int count() {
     return this.versions.size();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == null) {
+      return false;
+    }
+
+    if (obj.getClass() != this.getClass()) {
+      return false;
+    }
+
+    Versions that = (Versions) obj;
+
+    return Objects.equal(this.versions, that.versions);
   }
 }
