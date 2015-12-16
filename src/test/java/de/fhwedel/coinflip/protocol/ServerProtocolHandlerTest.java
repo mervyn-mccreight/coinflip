@@ -81,11 +81,13 @@ public class ServerProtocolHandlerTest {
   }
 
   @Test
+  @Ignore("only works with open-jdk, since i use jce with an unsigned bc-jar.")
   public void validStepFour_noError_returnsValidStepFive() throws Exception {
     // todo (15.12.2015): implement further with open-jdk or signed jar.
   }
 
   @Test
+  @Ignore("only works with open-jdk, since i use jce with an unsigned bc-jar.")
   public void validStepSix_noError_returnsValidStepSeven() throws Exception {
     // todo (15.12.2015): implement further with open-jdk or signed jar.
   }
