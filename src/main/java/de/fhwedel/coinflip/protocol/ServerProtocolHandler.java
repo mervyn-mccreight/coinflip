@@ -144,7 +144,7 @@ public class ServerProtocolHandler implements ProtocolHandler {
       // fetch public parts of the key-pair to publish them.
       parts = KeyDataExtractor.getPublicKeyParts(keyPair);
     } catch (CipherException e) {
-      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+      return new BaseProtocolBuilder().setId(ProtocolId.THREE).setStatus(ProtocolStatus.EXCEPTION)
           .createBaseProtocol();
     }
 
