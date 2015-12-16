@@ -1,20 +1,19 @@
 package de.fhwedel.coinflip;
 
-import de.fhwedel.coinflip.protocol.model.Sids;
-import de.fhwedel.coinflip.protocol.model.sid.Sid;
-import org.apache.log4j.Logger;
+import java.net.InetAddress;
+import java.security.Security;
 
-import de.fhwedel.coinflip.protocol.model.Versions;
+import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import java.security.Provider;
-import java.security.Security;
+import de.fhwedel.coinflip.protocol.model.Sids;
+import de.fhwedel.coinflip.protocol.model.Versions;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 
 public class CoinFlip {
 
   public static final Versions supportedVersions = Versions.containing("1.0");
-  public static Sids supportedSids =
- Sids.containing(Sid.SRA1024SHA1, Sid.SRA2048SHA1,
+  public static Sids supportedSids = Sids.containing(Sid.SRA1024SHA1, Sid.SRA2048SHA1,
       Sid.SRA3072SHA1, Sid.SRA1024SHA256, Sid.SRA2048SHA512);
 
   private static Logger logger = Logger.getLogger(CoinFlip.class);
@@ -39,7 +38,28 @@ public class CoinFlip {
         break;
       case "--client":
         logger.info("Starting as a client.");
-        CoinFlipClient coinFlipClient = new CoinFlipClient(null);
+        String addressString = args[1];
+        String[] split = addressString.split(":");
+
+        logger.debug("Parsed server ip: " + split[0]);
+        logger.debug("Parsed server port: " + split[1]);
+
+        try {
+          String address = String.valueOf(split[0]);
+          int port = Integer.parseInt(split[1]);
+
+          InetAddress inetAddress = InetAddress.getByName(address);
+
+          CoinFlipClient coinFlipClient = new CoinFlipClient();
+          CoinFlipClient.ConnectedClient connectedClient =
+              coinFlipClient.connect(inetAddress, port);
+          connectedClient.play();
+
+        } catch (Exception e) {
+          printUsageAndExit();
+        } catch (CoinFlipClient.ConnectionFailedException e) {
+          logger.info("Connection to server failed. Aborting...");
+        }
         break;
       default:
         printUsageAndExit();
