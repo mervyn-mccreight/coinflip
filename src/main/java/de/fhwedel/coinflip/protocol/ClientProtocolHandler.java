@@ -2,6 +2,9 @@ package de.fhwedel.coinflip.protocol;
 
 import java.util.Optional;
 
+import com.google.common.collect.Lists;
+
+import de.fhwedel.coinflip.CoinFlip;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
@@ -41,8 +44,15 @@ public class ClientProtocolHandler implements ProtocolHandler {
   }
 
   private BaseProtocol handleProtocolStepOne(BaseProtocol given) {
-    // todo (16.12.2015): implement
-    return new BaseProtocolBuilder().setId(ProtocolId.ERROR).setStatus(ProtocolStatus.EXCEPTION)
-        .createBaseProtocol();
+
+    if (!CoinFlip.supportedVersions.get().contains(given.getNegotiatedVersion())) {
+      return new BaseProtocolBuilder().setId(ProtocolId.ONE)
+          .setStatus(ProtocolStatus.CHOSEN_VERSION_UNKNOWN).createBaseProtocol();
+    }
+
+    return new BaseProtocolBuilder().setId(ProtocolId.TWO).setStatus(ProtocolStatus.OK)
+        .setProposedVersions(given.getProposedVersions())
+        .setChosenVersion(given.getNegotiatedVersion())
+        .setAvailableSids(Lists.newArrayList(CoinFlip.supportedSids)).createBaseProtocol();
   }
 }
