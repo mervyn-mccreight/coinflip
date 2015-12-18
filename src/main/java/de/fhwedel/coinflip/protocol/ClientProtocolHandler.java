@@ -5,12 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.bouncycastle.util.encoders.Hex;
+
 import com.google.common.collect.Lists;
 
 import de.fhwedel.coinflip.CoinFlip;
 import de.fhwedel.coinflip.CoinFlipClient;
 import de.fhwedel.coinflip.cipher.CryptoEngine;
+import de.fhwedel.coinflip.cipher.KeyDataExtractor;
 import de.fhwedel.coinflip.cipher.KeyPairFactory;
+import de.fhwedel.coinflip.cipher.PrivateKeyParts;
 import de.fhwedel.coinflip.cipher.exception.CipherException;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
@@ -38,9 +42,9 @@ public class ClientProtocolHandler implements ProtocolHandler {
           return Optional.of(handleProtocolStepThree(given));
 
         case FIVE:
-          break;
-
+          return Optional.of(handleProtocolStepFive(given));
         case SEVEN:
+          // todo (18.12.2015): implement last step: validation and check who won :-)
           break;
         case ZERO:
         case TWO:
@@ -51,6 +55,35 @@ public class ClientProtocolHandler implements ProtocolHandler {
     }
 
     return Optional.empty();
+  }
+
+  private BaseProtocol handleProtocolStepFive(BaseProtocol given) {
+    // todo (18.12.2015): implement general error checking. this is just the basic for now.
+
+    if (given.getEncryptedChosenCoin() == null || given.getEncryptedChosenCoin().isEmpty()) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.ERROR)
+          .createBaseProtocol();
+    }
+
+    String deChosenCoin;
+    PrivateKeyParts parts;
+    try {
+      deChosenCoin = CryptoEngine.decrypt(Hex.decode(given.getEncryptedChosenCoin()), "SRA",
+          keyPair.getPrivate());
+      parts = KeyDataExtractor.getPrivateParts(keyPair);
+    } catch (CipherException e) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+          .createBaseProtocol();
+    }
+
+    return new BaseProtocolBuilder().setId(ProtocolId.SIX).setStatus(ProtocolStatus.OK)
+        .setChosenVersion(given.getNegotiatedVersion())
+        .setProposedVersions(given.getProposedVersions())
+        .setPublicKeyParts(given.getP(), given.getQ()).setChosenSid(given.getSid())
+        .setAvailableSids(given.getAvailableSids()).setInitialCoin(given.getPlainCoin())
+        .setEnChosenCoin(given.getEncryptedChosenCoin()).setEncryptedCoin(given.getEncryptedCoin())
+        .setDeChosenCoin(deChosenCoin).setKeyA(Lists.newArrayList(parts.getE(), parts.getD()))
+        .createBaseProtocol();
   }
 
   private BaseProtocol handleProtocolStepThree(BaseProtocol given) {
