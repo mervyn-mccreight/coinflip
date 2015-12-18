@@ -90,7 +90,7 @@ public class CoinFlipClient {
             statusIsOk = false;
           }
 
-          IOUtils.write(parser.toJson(protocol), out);
+          IOUtils.write(parser.toJson(protocol) + System.lineSeparator(), out);
         }
 
         return new CoinFlipClient();
