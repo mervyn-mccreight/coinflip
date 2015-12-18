@@ -24,6 +24,8 @@ import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public class CoinFlipClient {
 
+  public static final String[] coin = {"HEAD", "TAIL"};
+
   public ConnectedClient connect(InetAddress serverAddress, int port)
       throws ConnectionFailedException {
     try {

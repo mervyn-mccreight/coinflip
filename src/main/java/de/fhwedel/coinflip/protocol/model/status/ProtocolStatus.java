@@ -10,7 +10,8 @@ public enum ProtocolStatus {
       "SERVER-SIDE ERROR"), UNKNOWN_PROTOCOL(30, "UNKNOWN_PROTOCOL_ID"), NO_KEY(40,
           "NO_KEY_GIVEN"), UNEXPECTED_ID(41,
               "UNEXPECTED_PROTOCOL_ID GIVEN"), CHOSEN_VERSION_UNKNOWN(42,
-                  "CHOSEN_VERSION_UNKNOWN_TO_CLIENT");
+                  "CHOSEN_VERSION_UNKNOWN_TO_CLIENT"), CHOSEN_SID_UNKNOWN(43,
+                      "CHOSEN_SID_UNKNOWN_TO_CLIENT"), P_OR_Q_MISSING(50, "P_OR_Q_MISSING");
 
   private final int id;
   private final String message;
