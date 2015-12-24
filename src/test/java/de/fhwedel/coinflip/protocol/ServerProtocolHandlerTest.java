@@ -2,10 +2,12 @@ package de.fhwedel.coinflip.protocol;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.security.Security;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,6 +31,7 @@ public class ServerProtocolHandlerTest {
 
   @Before
   public void setUp() throws Exception {
+    Security.addProvider(new BouncyCastleProvider());
     handler = new ServerProtocolHandler(SESSION_ID);
   }
 
@@ -59,7 +62,6 @@ public class ServerProtocolHandlerTest {
   }
 
   @Test
-  @Ignore("only works with open-jdk, since i use jce with an unsigned bc-jar.")
   public void validStepTwo_noError_returnsValidStepThree() throws Exception {
     BaseProtocol input = new BaseProtocolBuilder().setId(ProtocolId.TWO)
         .setStatus(ProtocolStatus.OK).setChosenVersion("1.0")
@@ -77,7 +79,16 @@ public class ServerProtocolHandlerTest {
     assertThat(output.getId()).isEqualTo(ProtocolId.THREE);
     assertThat(output.getStatus()).isEqualTo(ProtocolStatus.OK.getId());
 
-    // todo (15.12.2015): implement further with open-jdk or signed jar.
+    // todo (12/24/15): consider checking for prime.
+    assertThat(output.getP()).isNotNull();
+    assertThat(output.getQ()).isNotNull();
+    assertThat(output.getQ()).isNotEqualTo(output.getP());
+
+    assertThat(output.getAvailableSids()).hasSize(2);
+    Sids own = output.getAvailableSids().get(1);
+
+    assertThat(own).isEqualTo(CoinFlip.supportedSids);
+    assertThat(output.getSid()).isIn(CoinFlip.supportedSids.get());
   }
 
   @Test
