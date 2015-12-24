@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -22,7 +22,9 @@ import com.google.common.collect.Sets;
 import de.fhwedel.coinflip.CoinFlip;
 import de.fhwedel.coinflip.CoinFlipServer;
 import de.fhwedel.coinflip.cipher.CryptoEngine;
+import de.fhwedel.coinflip.cipher.KeyDataExtractor;
 import de.fhwedel.coinflip.cipher.KeyPairFactory;
+import de.fhwedel.coinflip.cipher.PrivateKeyParts;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
 import de.fhwedel.coinflip.protocol.model.Sids;
@@ -150,9 +152,46 @@ public class ServerProtocolHandlerTest {
   }
 
   @Test
-  @Ignore("only works with open-jdk, since i use jce with an unsigned bc-jar.")
   public void validStepSix_noError_returnsValidStepSeven() throws Exception {
-    // todo (15.12.2015): implement further with open-jdk or signed jar.
+    ArrayList<String> coin = Lists.newArrayList("HEAD", "TAIL");
+
+    KeyPair keyPair = KeyPairFactory.generateKeyPair(1024, p, q);
+    String headEncryption = CryptoEngine.encrypt("HEAD".getBytes(), Sid.SRA1024SHA1.getAlgorithm(),
+        keyPair.getPublic());
+    String tailEncryption = CryptoEngine.encrypt("TAIL".getBytes(), Sid.SRA1024SHA1.getAlgorithm(),
+        keyPair.getPublic());
+
+    KeyPair serverKeyPair = CoinFlipServer.keyMap.get(SESSION_ID);
+
+    String enChosenCoin =
+        CryptoEngine.encrypt(Hex.decode(headEncryption), "SRA", serverKeyPair.getPublic());
+    String desired = "TAIL";
+    String deChosenCoin =
+        CryptoEngine.decrypt(Hex.decode(enChosenCoin), "SRA", keyPair.getPrivate());
+
+    PrivateKeyParts privateParts = KeyDataExtractor.getPrivateParts(keyPair);
+
+    BaseProtocol input = new BaseProtocolBuilder().setId(ProtocolId.SIX)
+        .setStatus(ProtocolStatus.OK).setChosenVersion("1.0")
+        .setProposedVersions(
+            Lists.newArrayList(CoinFlip.supportedVersions, CoinFlip.supportedVersions))
+        .setChosenSid(Sid.SRA1024SHA1)
+        .setAvailableSids(Lists.newArrayList(CoinFlip.supportedSids, CoinFlip.supportedSids))
+        .setPublicKeyParts(p, q).setInitialCoin(coin)
+        .setEncryptedCoin(Lists.newArrayList(headEncryption, tailEncryption))
+        .setEnChosenCoin(enChosenCoin).setDesiredCoin(desired).setDeChosenCoin(deChosenCoin)
+        .setKeyA(Lists.newArrayList(privateParts.getE(), privateParts.getD())).createBaseProtocol();
+
+    Optional<BaseProtocol> maybeOutput = handler.work(Optional.of(input));
+
+    assertThat(maybeOutput.isPresent()).isTrue();
+
+    BaseProtocol output = maybeOutput.get();
+
+    assertThat(output.getId()).isEqualTo(ProtocolId.SEVEN);
+    assertThat(output.getStatus()).isEqualTo(ProtocolStatus.OK.getId());
+
+    assertThat(output.getPrivateParametersForKeyB()).hasSize(2);
   }
 
   // todo (15.12.2015): test error cases!
