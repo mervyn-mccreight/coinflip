@@ -94,7 +94,7 @@ public class ServerProtocolHandler implements ProtocolHandler {
   private BaseProtocol handleProtocolStepZero(BaseProtocol given) {
     List<Versions> proposed = given.getProposedVersions();
 
-    if (proposed.isEmpty() || proposed == null) {
+    if (proposed == null || proposed.isEmpty()) {
       return new BaseProtocolBuilder().setId(ProtocolId.ZERO).setStatus(ProtocolStatus.NO_VERSION)
           .createBaseProtocol();
     }
@@ -118,7 +118,7 @@ public class ServerProtocolHandler implements ProtocolHandler {
   private BaseProtocol handleProtocolStepTwo(BaseProtocol given) {
     List<Sids> proposed = given.getAvailableSids();
 
-    if (proposed.isEmpty() || proposed == null) {
+    if (proposed == null || proposed.isEmpty()) {
       return new BaseProtocolBuilder().setId(ProtocolId.TWO).setStatus(ProtocolStatus.ERROR)
           .createBaseProtocol();
     }
