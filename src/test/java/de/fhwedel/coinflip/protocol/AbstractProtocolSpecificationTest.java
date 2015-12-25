@@ -2,12 +2,12 @@ package de.fhwedel.coinflip.protocol;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigInteger;
+
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
-
-import java.math.BigInteger;
 
 public abstract class AbstractProtocolSpecificationTest {
   public void assertEmptyPayload(BaseProtocol protocol) {
@@ -38,7 +38,7 @@ public abstract class AbstractProtocolSpecificationTest {
   }
 
   public void assertSid(BaseProtocol protocol, Sid sid) {
-    assertThat(protocol.getSid()).isEqualTo(sid);
+    assertThat(protocol.getSidId()).isEqualTo(sid.getId());
   }
 
   public void assertStatusId(BaseProtocol protocol, ProtocolStatus status) {

@@ -1,22 +1,19 @@
 package de.fhwedel.coinflip.protocol.model;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import de.fhwedel.coinflip.protocol.model.sid.Sid;
-
-import java.util.List;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.google.gson.annotations.SerializedName;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 
 public class Sids {
-  private Set<Sid> sids;
+  @SerializedName("sids")
+  private Set<Integer> sidIds;
 
-  public Sids(Set<Sid> sids) {
-    this.sids = sids;
-  }
-
-  public int count() {
-    return this.sids.size();
+  public Sids(Set<Integer> sids) {
+    this.sidIds = sids;
   }
 
   @Override
@@ -31,19 +28,24 @@ public class Sids {
 
     Sids that = (Sids) obj;
 
-    return Objects.equals(this.sids, that.sids);
+    return Objects.equals(this.sidIds, that.sidIds);
   }
 
-  public Set<Sid> get() {
-    return this.sids;
+  public Set<Integer> get() {
+    return this.sidIds;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(this.sids);
+    return Objects.hashCode(this.sidIds);
   }
 
   public static Sids containing(Sid... sids) {
-    return new Sids(Sets.newHashSet(sids));
+    return new Sids(Arrays.stream(sids).mapToInt(Sid::getId).boxed().collect(Collectors.toSet()));
+  }
+
+  @Override
+  public String toString() {
+    return "Sids{" + "sidIds=" + sidIds + '}';
   }
 }

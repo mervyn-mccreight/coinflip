@@ -1,0 +1,45 @@
+{
+  "protocolId": 2,
+  "statusId": 0,
+  "statusMessage": "OK",
+  "protocolNegotiation": {
+    "version": "1.0",
+    "availableVersions": [
+      {
+        "versions": [
+          "1.0"
+        ]
+      },
+      {
+        "versions": [
+          "1.0"
+        ]
+      }
+    ]
+  },
+  "keyNegotiation": {
+    "p": null,
+    "q": null,
+    "sid": 0,
+    "availableSids": [
+      {
+        "sids": [
+          0,
+          1,
+          2,
+          99
+        ]
+      }
+    ]
+  },
+  "payload": {
+    "initialCoin": [],
+    "desiredCoin": null,
+    "encryptedCoin": [],
+    "enChosenCoin": null,
+    "deChosenCoin": null,
+    "keyA": [],
+    "keyB": [],
+    "signaturA": null
+  }
+}

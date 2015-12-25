@@ -19,6 +19,7 @@ import de.fhwedel.coinflip.cipher.exception.CipherException;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
+import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public class ClientProtocolHandler implements ProtocolHandler {
@@ -79,15 +80,15 @@ public class ClientProtocolHandler implements ProtocolHandler {
     return new BaseProtocolBuilder().setId(ProtocolId.SIX).setStatus(ProtocolStatus.OK)
         .setChosenVersion(given.getNegotiatedVersion())
         .setProposedVersions(given.getProposedVersions())
-        .setPublicKeyParts(given.getP(), given.getQ()).setChosenSid(given.getSid())
-        .setAvailableSids(given.getAvailableSids()).setInitialCoin(given.getPlainCoin())
+        .setPublicKeyParts(given.getP(), given.getQ()).setChosenSid(given.getSidId())
+        .setAvailableSids(given.getAvailableSidsIds()).setInitialCoin(given.getPlainCoin())
         .setEnChosenCoin(given.getEncryptedChosenCoin()).setEncryptedCoin(given.getEncryptedCoin())
         .setDeChosenCoin(deChosenCoin).setKeyA(Lists.newArrayList(parts.getE(), parts.getD()))
         .createBaseProtocol();
   }
 
   private BaseProtocol handleProtocolStepThree(BaseProtocol given) {
-    if (!CoinFlip.supportedSids.get().contains(given.getSid())) {
+    if (!CoinFlip.supportedSids.get().contains(given.getSidId())) {
       return new BaseProtocolBuilder().setId(ProtocolId.THREE)
           .setStatus(ProtocolStatus.CHOSEN_SID_UNKNOWN).createBaseProtocol();
     }
@@ -101,14 +102,15 @@ public class ClientProtocolHandler implements ProtocolHandler {
     List<String> encryptedCoin;
     try {
       keyPair =
-          KeyPairFactory.generateKeyPair(given.getSid().getModulus(), given.getP(), given.getQ());
+ KeyPairFactory.generateKeyPair(Sid.fromId(given.getSidId()).get().getModulus(),
+          given.getP(), given.getQ());
       encryptedCoin = Lists.newArrayList(CoinFlipClient.coin);
       Collections.shuffle(encryptedCoin);
 
       encryptedCoin.replaceAll(x -> {
         try {
-          return CryptoEngine.encrypt(x.getBytes(), given.getSid().getAlgorithm(),
-              keyPair.getPublic());
+          return CryptoEngine.encrypt(x.getBytes(),
+              Sid.fromId(given.getSidId()).get().getAlgorithm(), keyPair.getPublic());
         } catch (CipherException e) {
           throw new RuntimeException(e);
         }
@@ -122,8 +124,8 @@ public class ClientProtocolHandler implements ProtocolHandler {
     return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.OK)
         .setChosenVersion(given.getNegotiatedVersion())
         .setProposedVersions(given.getProposedVersions())
-        .setPublicKeyParts(given.getP(), given.getQ()).setChosenSid(given.getSid())
-        .setAvailableSids(given.getAvailableSids())
+        .setPublicKeyParts(given.getP(), given.getQ()).setChosenSid(given.getSidId())
+        .setAvailableSids(given.getAvailableSidsIds())
         .setInitialCoin(Lists.newArrayList(CoinFlipClient.coin)).setEncryptedCoin(encryptedCoin)
         .createBaseProtocol();
   }

@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
-import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public class BaseProtocolBuilder {
@@ -36,13 +35,13 @@ public class BaseProtocolBuilder {
     return this;
   }
 
-  public BaseProtocolBuilder setChosenSid(Sid sid) {
-    keyNegotiationBuilder.setSid(sid);
+  public BaseProtocolBuilder setChosenSid(Integer sidId) {
+    keyNegotiationBuilder.setSidId(sidId);
     return this;
   }
 
-  public BaseProtocolBuilder setAvailableSids(List<Sids> newSids) {
-    keyNegotiationBuilder.setAvailableSids(newSids);
+  public BaseProtocolBuilder setAvailableSids(List<Sids> newSidIds) {
+    keyNegotiationBuilder.setAvailableSids(newSidIds);
     return this;
   }
 

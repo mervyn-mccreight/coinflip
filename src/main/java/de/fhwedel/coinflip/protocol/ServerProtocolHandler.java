@@ -83,8 +83,8 @@ public class ServerProtocolHandler implements ProtocolHandler {
 
     return new BaseProtocolBuilder().setId(ProtocolId.SEVEN).setStatus(ProtocolStatus.OK)
         .setChosenVersion(given.getNegotiatedVersion())
-        .setProposedVersions(given.getProposedVersions()).setChosenSid(given.getSid())
-        .setAvailableSids(given.getAvailableSids()).setInitialCoin(given.getPlainCoin())
+        .setProposedVersions(given.getProposedVersions()).setChosenSid(given.getSidId())
+        .setAvailableSids(given.getAvailableSidsIds()).setInitialCoin(given.getPlainCoin())
         .setEncryptedCoin(given.getEncryptedCoin())
         .setDesiredCoin(given.getDesiredCoinSide()).setEnChosenCoin(given.getEncryptedChosenCoin())
         .setDeChosenCoin(given.getDecryptedChosenCoin())
@@ -117,7 +117,7 @@ public class ServerProtocolHandler implements ProtocolHandler {
   }
 
   private BaseProtocol handleProtocolStepTwo(BaseProtocol given) {
-    List<Sids> proposed = given.getAvailableSids();
+    List<Sids> proposed = given.getAvailableSidsIds();
 
     if (proposed == null || proposed.isEmpty()) {
       return new BaseProtocolBuilder().setId(ProtocolId.TWO).setStatus(ProtocolStatus.ERROR)
@@ -127,15 +127,15 @@ public class ServerProtocolHandler implements ProtocolHandler {
     List<Sids> newSids = Lists.newArrayList(proposed);
     newSids.add(CoinFlip.supportedSids);
 
-    Set<Sid> intersection = Sets.intersection(newSids.get(0).get(), newSids.get(1).get());
+    Set<Integer> intersection = Sets.intersection(newSids.get(0).get(), newSids.get(1).get());
 
     if (intersection.isEmpty()) {
       return new BaseProtocolBuilder().setId(ProtocolId.TWO).setStatus(ProtocolStatus.ERROR)
 
-      .setAvailableSids(given.getAvailableSids()).createBaseProtocol();
+      .setAvailableSids(given.getAvailableSidsIds()).createBaseProtocol();
     }
 
-    Sid chosenSid = intersection.iterator().next();
+    Sid chosenSid = Sid.fromId(intersection.iterator().next()).get();
 
     KeyPair keyPair;
     PublicKeyParts parts;
@@ -154,7 +154,7 @@ public class ServerProtocolHandler implements ProtocolHandler {
 
     return new BaseProtocolBuilder().setChosenVersion(given.getNegotiatedVersion())
         .setProposedVersions(given.getProposedVersions()).setStatus(ProtocolStatus.OK)
-        .setId(ProtocolId.THREE).setAvailableSids(newSids).setChosenSid(chosenSid)
+        .setId(ProtocolId.THREE).setAvailableSids(newSids).setChosenSid(chosenSid.getId())
         .setPublicKeyParts(parts.getP(), parts.getQ()).createBaseProtocol();
   }
 
@@ -195,8 +195,9 @@ public class ServerProtocolHandler implements ProtocolHandler {
 
     return new BaseProtocolBuilder().setId(ProtocolId.FIVE).setStatus(ProtocolStatus.OK)
         .setChosenVersion(given.getNegotiatedVersion())
-        .setProposedVersions(given.getProposedVersions()).setAvailableSids(given.getAvailableSids())
-        .setChosenSid(given.getSid()).setPublicKeyParts(given.getP(), given.getQ())
+        .setProposedVersions(given.getProposedVersions())
+        .setAvailableSids(given.getAvailableSidsIds()).setChosenSid(given.getSidId())
+        .setPublicKeyParts(given.getP(), given.getQ())
         .setInitialCoin(given.getPlainCoin()).setEncryptedCoin(given.getEncryptedCoin())
         .setEnChosenCoin(encryptedCoinSide).setDesiredCoin(coin.get(0)).createBaseProtocol();
   }

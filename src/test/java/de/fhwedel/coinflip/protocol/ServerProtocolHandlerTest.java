@@ -105,11 +105,11 @@ public class ServerProtocolHandlerTest {
     assertThat(output.getQ()).isNotNull();
     assertThat(output.getQ()).isNotEqualTo(output.getP());
 
-    assertThat(output.getAvailableSids()).hasSize(2);
-    Sids own = output.getAvailableSids().get(1);
+    assertThat(output.getAvailableSidsIds()).hasSize(2);
+    Sids own = output.getAvailableSidsIds().get(1);
 
     assertThat(own).isEqualTo(CoinFlip.supportedSids);
-    assertThat(output.getSid()).isIn(CoinFlip.supportedSids.get());
+    assertThat(output.getSidId()).isIn(CoinFlip.supportedSids.get());
   }
 
   @Test
@@ -126,7 +126,7 @@ public class ServerProtocolHandlerTest {
         .setStatus(ProtocolStatus.OK).setChosenVersion("1.0")
         .setProposedVersions(
             Lists.newArrayList(CoinFlip.supportedVersions, CoinFlip.supportedVersions))
-        .setChosenSid(Sid.SRA1024SHA1)
+        .setChosenSid(Sid.SRA1024SHA1.getId())
         .setAvailableSids(Lists.newArrayList(CoinFlip.supportedSids, CoinFlip.supportedSids))
         .setPublicKeyParts(p, q).setInitialCoin(coin)
         .setEncryptedCoin(Lists.newArrayList(headEncryption, tailEncryption)).createBaseProtocol();
@@ -175,7 +175,7 @@ public class ServerProtocolHandlerTest {
         .setStatus(ProtocolStatus.OK).setChosenVersion("1.0")
         .setProposedVersions(
             Lists.newArrayList(CoinFlip.supportedVersions, CoinFlip.supportedVersions))
-        .setChosenSid(Sid.SRA1024SHA1)
+        .setChosenSid(Sid.SRA1024SHA1.getId())
         .setAvailableSids(Lists.newArrayList(CoinFlip.supportedSids, CoinFlip.supportedSids))
         .setPublicKeyParts(p, q).setInitialCoin(coin)
         .setEncryptedCoin(Lists.newArrayList(headEncryption, tailEncryption))
@@ -219,7 +219,7 @@ public class ServerProtocolHandlerTest {
         .setStatus(ProtocolStatus.OK).setChosenVersion("1.0")
         .setProposedVersions(
             Lists.newArrayList(CoinFlip.supportedVersions, CoinFlip.supportedVersions))
-        .setChosenSid(Sid.SRA1024SHA1)
+        .setChosenSid(Sid.SRA1024SHA1.getId())
         .setAvailableSids(Lists.newArrayList(CoinFlip.supportedSids, CoinFlip.supportedSids))
         .setPublicKeyParts(p, q).setInitialCoin(coin)
         .setEncryptedCoin(Lists.newArrayList(headEncryption, tailEncryption))
@@ -241,6 +241,24 @@ public class ServerProtocolHandlerTest {
 
   // todo (15.12.2015): test error cases!
 
-  // todo (15.12.2015): write test for https://github.com/mervyn-mccreight/coinflip/issues/1.
-  // fix the problem.
+  // https://github.com/mervyn-mccreight/coinflip/issues/1.
+  @Test
+  public void bug_issue1_clientSendsUnknownSidId_noError_returnValidStepThree() throws Exception {
+
+    Set<Integer> withUnknown = Sets.newHashSet(0, 1, 2, 99);
+
+    BaseProtocol input = new BaseProtocolBuilder().setId(ProtocolId.TWO)
+        .setStatus(ProtocolStatus.OK).setChosenVersion("1.0")
+        .setProposedVersions(
+            Lists.newArrayList(Versions.containing("1.0"), Versions.containing("1.0")))
+        .setAvailableSids(Lists.newArrayList(new Sids(withUnknown))).createBaseProtocol();
+
+    Optional<BaseProtocol> maybeOutput = handler.work(Optional.of(input));
+
+    assertThat(maybeOutput.isPresent()).isTrue();
+
+    BaseProtocol output = maybeOutput.get();
+
+    assertThat(output.getSidId()).isIn(CoinFlip.supportedSids.get());
+  }
 }

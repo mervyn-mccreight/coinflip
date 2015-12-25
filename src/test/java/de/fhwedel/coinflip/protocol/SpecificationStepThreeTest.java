@@ -10,8 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Sets;
-
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.Sids;
@@ -52,10 +50,10 @@ public class SpecificationStepThreeTest extends AbstractProtocolSpecificationTes
 
   @Test
   public void availableSids() throws Exception {
-    List<Sids> availableSids = protocol.getAvailableSids();
+    List<Sids> availableSids = protocol.getAvailableSidsIds();
     assertThat(availableSids).hasSize(2);
 
-    Sids expected = new Sids(Sets.newHashSet(Sid.SRA1024SHA1, Sid.SRA2048SHA1, Sid.SRA3072SHA1));
+    Sids expected = Sids.containing(Sid.SRA1024SHA1, Sid.SRA2048SHA1, Sid.SRA3072SHA1);
     Sids sids1 = availableSids.get(0);
     Sids sids2 = availableSids.get(1);
     assertThat(sids1).isEqualTo(expected);

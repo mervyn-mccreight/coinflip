@@ -1,20 +1,18 @@
 package de.fhwedel.coinflip.protocol.model;
 
-import de.fhwedel.coinflip.protocol.model.sid.Sid;
-
 import java.math.BigInteger;
 import java.util.List;
 
 public class KeyNegotiation {
   private BigInteger p;
   private BigInteger q;
-  private Sid sid;
+  private Integer sid;
   private List<Sids> availableSids;
 
-  public KeyNegotiation(BigInteger p, BigInteger q, Sid sid, List<Sids> availableSids) {
+  public KeyNegotiation(BigInteger p, BigInteger q, Integer sidId, List<Sids> availableSids) {
     this.p = p;
     this.q = q;
-    this.sid = sid;
+    this.sid = sidId;
     this.availableSids = availableSids;
   }
 
@@ -26,11 +24,11 @@ public class KeyNegotiation {
     return this.q;
   }
 
-  public Sid getSid() {
+  public Integer getSidId() {
     return this.sid;
   }
 
-  public List<Sids> getAvailableSids() {
+  public List<Sids> getAvailableSidsIds() {
     return this.availableSids;
   }
 }

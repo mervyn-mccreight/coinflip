@@ -2,12 +2,10 @@ package de.fhwedel.coinflip.protocol.model;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Set;
 
 import com.google.gson.annotations.SerializedName;
 
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
-import de.fhwedel.coinflip.protocol.model.sid.Sid;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 
 public class BaseProtocol {
@@ -63,12 +61,12 @@ public class BaseProtocol {
     return this.keyNegotiation.getQ();
   }
 
-  public Sid getSid() {
-    return this.keyNegotiation.getSid();
+  public Integer getSidId() {
+    return this.keyNegotiation.getSidId();
   }
 
-  public List<Sids> getAvailableSids() {
-    return this.keyNegotiation.getAvailableSids();
+  public List<Sids> getAvailableSidsIds() {
+    return this.keyNegotiation.getAvailableSidsIds();
   }
 
   public List<String> getPlainCoin() {
