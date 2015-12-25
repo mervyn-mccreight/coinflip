@@ -1,4 +1,4 @@
-package de.fhwedel.coinflip.protocol;
+package de.fhwedel.coinflip.protocol.io;
 
 import java.io.File;
 import java.util.Optional;
@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.fhwedel.coinflip.protocol.io.ProtocolParser;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 
 public class StepTwoUnknownSid extends AbstractProtocolSpecificationTest {

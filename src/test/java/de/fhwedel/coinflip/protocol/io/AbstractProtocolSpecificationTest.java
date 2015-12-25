@@ -1,4 +1,4 @@
-package de.fhwedel.coinflip.protocol;
+package de.fhwedel.coinflip.protocol.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

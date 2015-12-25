@@ -1,4 +1,4 @@
-package de.fhwedel.coinflip.protocol;
+package de.fhwedel.coinflip.protocol.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.fhwedel.coinflip.protocol.io.ProtocolParser;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.Versions;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
