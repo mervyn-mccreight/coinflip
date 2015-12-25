@@ -2,6 +2,7 @@ package de.fhwedel.coinflip.cipher;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.function.Function;
 
 import javax.crypto.Cipher;
 
@@ -23,16 +24,19 @@ public class CryptoEngine {
     }
   }
 
-  public static String decrypt(byte[] data, String algorithm, PrivateKey key)
+  public static String decrypt(byte[] data, String algorithm, PrivateKey key,
+      Function<byte[], String> resultMapper)
       throws CipherException {
     try {
       Cipher engine = Cipher.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME);
       engine.init(Cipher.DECRYPT_MODE, key);
       byte[] plain = engine.doFinal(data);
-      return new String(plain);
+
+      return resultMapper.apply(plain);
     } catch (Exception e) {
       throw new CipherException(e);
     }
   }
+
 
 }

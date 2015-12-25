@@ -7,6 +7,7 @@ import java.security.Security;
 import java.util.Optional;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,6 +15,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.fhwedel.coinflip.CoinFlip;
+import de.fhwedel.coinflip.CoinFlipServer;
+import de.fhwedel.coinflip.cipher.KeyPairFactory;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
 import de.fhwedel.coinflip.protocol.model.Sids;
@@ -34,6 +37,12 @@ public class ClientProtocolHandlerTest {
   public void setUp() throws Exception {
     Security.addProvider(new BouncyCastleProvider());
     handler = new ClientProtocolHandler();
+    CoinFlipServer.keyMap.put(1, KeyPairFactory.generateKeyPair(1024, p, q));
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    CoinFlipServer.keyMap.remove(1);
   }
 
   @Test
@@ -85,5 +94,34 @@ public class ClientProtocolHandlerTest {
 
     assertThat(isHexadecimal(output.getEncryptedCoin().get(0))).isTrue();
     assertThat(isHexadecimal(output.getEncryptedCoin().get(1))).isTrue();
+  }
+
+  @Test
+  public void validStepFive_noError_returnValidStepSix() throws Exception {
+    // workaround, because client needs a key-pair, which is
+    // generated in handling step three.
+    BaseProtocol input = new BaseProtocolBuilder().setId(ProtocolId.THREE)
+        .setStatus(ProtocolStatus.OK).setChosenVersion("1.0")
+        .setProposedVersions(
+            Lists.newArrayList(Versions.containing("1.0"), Versions.containing("1.0")))
+        .setChosenSid(0).setAvailableSids(Lists.newArrayList(new Sids(Sets.newHashSet(0, 1, 2)),
+            new Sids(Sets.newHashSet(0, 1, 2))))
+        .setPublicKeyParts(p, q).createBaseProtocol();
+
+    Optional<BaseProtocol> maybeStepFour = handler.work(Optional.of(input));
+
+    ServerProtocolHandler serverProtocolHandler = new ServerProtocolHandler(1);
+    Optional<BaseProtocol> maybeStepFive = serverProtocolHandler.work(maybeStepFour);
+
+    Optional<BaseProtocol> maybeOutput = handler.work(maybeStepFive);
+
+    assertThat(maybeOutput.isPresent()).isTrue();
+
+    BaseProtocol output = maybeOutput.get();
+
+    assertThat(output.getId()).isEqualTo(ProtocolId.SIX);
+    assertThat(output.getStatus()).isEqualTo(ProtocolStatus.OK.getId());
+
+    assertThat(isHexadecimal(output.getDecryptedChosenCoin())).isTrue();
   }
 }

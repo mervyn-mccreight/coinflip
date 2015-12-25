@@ -167,7 +167,8 @@ public class ServerProtocolHandlerTest {
         CryptoEngine.encrypt(Hex.decode(headEncryption), "SRA", serverKeyPair.getPublic());
     String desired = "TAIL";
     String deChosenCoin =
-        CryptoEngine.decrypt(Hex.decode(enChosenCoin), "SRA", keyPair.getPrivate());
+ CryptoEngine.decrypt(Hex.decode(enChosenCoin), "SRA",
+        keyPair.getPrivate(), Hex::toHexString);
 
     PrivateKeyParts privateParts = KeyDataExtractor.getPrivateParts(keyPair);
 
@@ -211,7 +212,8 @@ public class ServerProtocolHandlerTest {
         CryptoEngine.encrypt(Hex.decode(headEncryption), "SRA", serverKeyPair.getPublic());
     String desired = "TAIL";
     String deChosenCoin =
-        CryptoEngine.decrypt(Hex.decode(enChosenCoin), "SRA", keyPair.getPrivate());
+ CryptoEngine.decrypt(Hex.decode(enChosenCoin), "SRA",
+        keyPair.getPrivate(), Hex::toHexString);
 
     PrivateKeyParts privateParts = KeyDataExtractor.getPrivateParts(keyPair);
 

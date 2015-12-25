@@ -70,7 +70,7 @@ public class ClientProtocolHandler implements ProtocolHandler {
     PrivateKeyParts parts;
     try {
       deChosenCoin = CryptoEngine.decrypt(Hex.decode(given.getEncryptedChosenCoin()), "SRA",
-          keyPair.getPrivate());
+          keyPair.getPrivate(), Hex::toHexString);
       parts = KeyDataExtractor.getPrivateParts(keyPair);
     } catch (CipherException e) {
       return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
