@@ -123,5 +123,7 @@ public class ClientProtocolHandlerTest {
     assertThat(output.getStatus()).isEqualTo(ProtocolStatus.OK.getId());
 
     assertThat(isHexadecimal(output.getDecryptedChosenCoin())).isTrue();
+
+    assertThat(output.getPrivateParametersForKeyA()).hasSize(2);
   }
 }
