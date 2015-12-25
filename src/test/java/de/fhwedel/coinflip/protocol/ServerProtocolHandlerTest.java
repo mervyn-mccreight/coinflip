@@ -194,6 +194,51 @@ public class ServerProtocolHandlerTest {
     assertThat(output.getPrivateParametersForKeyB()).hasSize(2);
   }
 
+  // https://github.com/mervyn-mccreight/coinflip/issues/3
+  @Test
+  public void bug_issue3_step7_noEncryptedCoin() throws Exception {
+    ArrayList<String> coin = Lists.newArrayList("HEAD", "TAIL");
+
+    KeyPair keyPair = KeyPairFactory.generateKeyPair(1024, p, q);
+    String headEncryption = CryptoEngine.encrypt("HEAD".getBytes(), Sid.SRA1024SHA1.getAlgorithm(),
+        keyPair.getPublic());
+    String tailEncryption = CryptoEngine.encrypt("TAIL".getBytes(), Sid.SRA1024SHA1.getAlgorithm(),
+        keyPair.getPublic());
+
+    KeyPair serverKeyPair = CoinFlipServer.keyMap.get(SESSION_ID);
+
+    String enChosenCoin =
+        CryptoEngine.encrypt(Hex.decode(headEncryption), "SRA", serverKeyPair.getPublic());
+    String desired = "TAIL";
+    String deChosenCoin =
+        CryptoEngine.decrypt(Hex.decode(enChosenCoin), "SRA", keyPair.getPrivate());
+
+    PrivateKeyParts privateParts = KeyDataExtractor.getPrivateParts(keyPair);
+
+    BaseProtocol input = new BaseProtocolBuilder().setId(ProtocolId.SIX)
+        .setStatus(ProtocolStatus.OK).setChosenVersion("1.0")
+        .setProposedVersions(
+            Lists.newArrayList(CoinFlip.supportedVersions, CoinFlip.supportedVersions))
+        .setChosenSid(Sid.SRA1024SHA1)
+        .setAvailableSids(Lists.newArrayList(CoinFlip.supportedSids, CoinFlip.supportedSids))
+        .setPublicKeyParts(p, q).setInitialCoin(coin)
+        .setEncryptedCoin(Lists.newArrayList(headEncryption, tailEncryption))
+        .setEnChosenCoin(enChosenCoin).setDesiredCoin(desired).setDeChosenCoin(deChosenCoin)
+        .setKeyA(Lists.newArrayList(privateParts.getE(), privateParts.getD())).createBaseProtocol();
+
+    Optional<BaseProtocol> maybeOutput = handler.work(Optional.of(input));
+
+    assertThat(maybeOutput.isPresent()).isTrue();
+
+    BaseProtocol output = maybeOutput.get();
+
+    assertThat(output.getId()).isEqualTo(ProtocolId.SEVEN);
+    assertThat(output.getStatus()).isEqualTo(ProtocolStatus.OK.getId());
+
+    assertThat(output.getEncryptedCoin()).isNotNull();
+    assertThat(output.getEncryptedCoin()).containsOnly(headEncryption, tailEncryption);
+  }
+
   // todo (15.12.2015): test error cases!
 
   // todo (15.12.2015): write test for https://github.com/mervyn-mccreight/coinflip/issues/1.

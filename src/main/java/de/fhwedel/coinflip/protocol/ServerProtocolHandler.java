@@ -85,6 +85,7 @@ public class ServerProtocolHandler implements ProtocolHandler {
         .setChosenVersion(given.getNegotiatedVersion())
         .setProposedVersions(given.getProposedVersions()).setChosenSid(given.getSid())
         .setAvailableSids(given.getAvailableSids()).setInitialCoin(given.getPlainCoin())
+        .setEncryptedCoin(given.getEncryptedCoin())
         .setDesiredCoin(given.getDesiredCoinSide()).setEnChosenCoin(given.getEncryptedChosenCoin())
         .setDeChosenCoin(given.getDecryptedChosenCoin())
         .setKeyA(given.getPrivateParametersForKeyA())
