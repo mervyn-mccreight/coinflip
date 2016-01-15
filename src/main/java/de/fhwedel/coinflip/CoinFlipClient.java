@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
+import de.fhwedel.coinflip.cipher.exception.CipherException;
 import de.fhwedel.coinflip.protocol.ClientProtocolHandler;
-import de.fhwedel.coinflip.protocol.ProtocolHandler;
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
@@ -45,7 +45,7 @@ public class CoinFlipClient {
 
   public class ConnectedClient {
     private Socket connection;
-    private ProtocolHandler handler;
+    private ClientProtocolHandler handler;
     private ProtocolParser parser;
     private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 
@@ -84,8 +84,24 @@ public class CoinFlipClient {
           logger.debug("Received from server: ");
           logger.debug(message);
 
-          Optional<BaseProtocol> answer = handler.work(parser.parseJson(message));
+          Optional<BaseProtocol> messageProtocol = parser.parseJson(message);
 
+          if (messageProtocol.isPresent()) {
+            if (messageProtocol.get().getId().equals(ProtocolId.SEVEN)) {
+              logger.debug("Received last protocol step. Game has ended.");
+              try {
+                String result = handler.determineCoinResult(messageProtocol.get());
+                logger.info("Coinflip result is: " + result);
+                logger.info("We guessed: " + messageProtocol.get().getDesiredCoinSide());
+              } catch (CipherException e) {
+                logger.error("Error decoding the result");
+                e.printStackTrace();
+              }
+              break;
+            }
+          }
+
+          Optional<BaseProtocol> answer = handler.work(messageProtocol);
           BaseProtocol protocol = answer.orElseThrow(UnknownProtocolException::new);
 
           if (protocol.getStatus() != ProtocolStatus.OK.getId()) {

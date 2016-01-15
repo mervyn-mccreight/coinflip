@@ -37,6 +37,4 @@ public class CryptoEngine {
       throw new CipherException(e);
     }
   }
-
-
 }

@@ -1,9 +1,10 @@
 package de.fhwedel.coinflip.cipher;
 
 import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
+import java.security.*;
+import java.util.List;
 
+import org.bouncycastle.jcajce.provider.asymmetric.sra.SRADecryptionKeySpec;
 import org.bouncycastle.jcajce.provider.asymmetric.sra.SRAKeyGenParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -21,7 +22,7 @@ public class KeyPairFactory {
 
       // generate the key pair.
       return generator.generateKeyPair();
-    } catch (Exception e) {
+    } catch (GeneralSecurityException e) {
       throw new CipherException(e);
     }
   }
@@ -39,6 +40,17 @@ public class KeyPairFactory {
 
       // generate a valid SRA key pair for the given p and q.
       return generator.generateKeyPair();
+    } catch (GeneralSecurityException e) {
+      throw new CipherException(e);
+    }
+  }
+
+  public static PrivateKey generatePrivateKey(BigInteger p, BigInteger q, List<BigInteger> parts)
+      throws CipherException {
+    try {
+      SRADecryptionKeySpec spec = new SRADecryptionKeySpec(p, q, parts.get(1), parts.get(0));
+      KeyFactory sra = KeyFactory.getInstance("SRA", BouncyCastleProvider.PROVIDER_NAME);
+      return sra.generatePrivate(spec);
     } catch (Exception e) {
       throw new CipherException(e);
     }

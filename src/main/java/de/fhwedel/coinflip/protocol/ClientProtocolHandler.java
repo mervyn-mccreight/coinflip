@@ -58,6 +58,14 @@ public class ClientProtocolHandler implements ProtocolHandler {
     return Optional.empty();
   }
 
+  public String determineCoinResult(BaseProtocol seven) throws CipherException {
+    String decryptedChosenCoin = seven.getDecryptedChosenCoin();
+    return CryptoEngine.decrypt(Hex.decode(decryptedChosenCoin),
+        Sid.fromId(seven.getSidId()).get().getAlgorithm(), KeyPairFactory.generatePrivateKey(
+            seven.getP(), seven.getQ(), seven.getPrivateParametersForKeyB()),
+        String::new);
+  }
+
   private BaseProtocol handleProtocolStepFive(BaseProtocol given) {
     // todo (18.12.2015): implement general error checking. this is just the basic for now.
 
@@ -100,6 +108,7 @@ public class ClientProtocolHandler implements ProtocolHandler {
         .setEnChosenCoin(given.getEncryptedChosenCoin()).setEncryptedCoin(given.getEncryptedCoin())
         .setDeChosenCoin(deChosenCoin).setKeyA(Lists.newArrayList(parts.getE(), parts.getD()))
         .setSignature(signature)
+.setDesiredCoin(given.getDesiredCoinSide())
         .createBaseProtocol();
   }
 

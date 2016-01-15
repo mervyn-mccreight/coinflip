@@ -89,7 +89,9 @@ public class ServerProtocolHandler implements ProtocolHandler {
         .setDesiredCoin(given.getDesiredCoinSide()).setEnChosenCoin(given.getEncryptedChosenCoin())
         .setDeChosenCoin(given.getDecryptedChosenCoin())
         .setKeyA(given.getPrivateParametersForKeyA())
-        .setKeyB(Lists.newArrayList(privateParts.getE(), privateParts.getD())).createBaseProtocol();
+        .setKeyB(Lists.newArrayList(privateParts.getE(), privateParts.getD()))
+        .setSignature(given.getSignature()).setPublicKeyParts(given.getP(), given.getQ())
+        .createBaseProtocol();
   }
 
   private BaseProtocol handleProtocolStepZero(BaseProtocol given) {
