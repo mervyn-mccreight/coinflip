@@ -125,5 +125,8 @@ public class ClientProtocolHandlerTest {
     assertThat(isHexadecimal(output.getDecryptedChosenCoin())).isTrue();
 
     assertThat(output.getPrivateParametersForKeyA()).hasSize(2);
+
+    assertThat(output.getSignature()).isNotEmpty();
+    assertThat(isHexadecimal(output.getSignature())).isTrue();
   }
 }

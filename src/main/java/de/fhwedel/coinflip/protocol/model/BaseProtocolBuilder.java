@@ -86,6 +86,11 @@ public class BaseProtocolBuilder {
     return this;
   }
 
+  public BaseProtocolBuilder setSignature(String signature) {
+    payloadBuilder.setSignature(signature);
+    return this;
+  }
+
   public BaseProtocol createBaseProtocol() {
     return new BaseProtocol(id, status, statusMessage,
         negotiationBuilder.createProtocolNegotiation(),

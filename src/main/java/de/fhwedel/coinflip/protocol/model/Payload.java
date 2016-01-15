@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 public class Payload {
-  // todo (27.11.2015): maybe coin class?
   private List<String> initialCoin;
   private String desiredCoin;
 
@@ -17,8 +16,11 @@ public class Payload {
   private List<BigInteger> keyA;
   private List<BigInteger> keyB;
 
+  private String signature;
+
   public Payload(List<String> initialCoin, String desiredCoin, List<String> encryptedCoin,
-      String enChosenCoin, String deChosenCoin, List<BigInteger> keyA, List<BigInteger> keyB) {
+      String enChosenCoin, String deChosenCoin, List<BigInteger> keyA, List<BigInteger> keyB,
+      String signature) {
     this.initialCoin = initialCoin;
     this.desiredCoin = desiredCoin;
     this.encryptedCoin = encryptedCoin;
@@ -26,6 +28,7 @@ public class Payload {
     this.deChosenCoin = deChosenCoin;
     this.keyA = keyA;
     this.keyB = keyB;
+    this.signature = signature;
   }
 
   public List<String> getInitialCoin() {
@@ -56,6 +59,7 @@ public class Payload {
     return Lists.newArrayList(this.keyB);
   }
 
-  // todo (27.11.2015): signature missing, but i do not know that it is atm.
-  // lol @ protocol.
+  public String getSignature() {
+    return signature;
+  }
 }

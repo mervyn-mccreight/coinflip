@@ -1,6 +1,8 @@
 package de.fhwedel.coinflip.protocol;
 
-import java.security.KeyPair;
+import java.io.IOException;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -11,10 +13,8 @@ import com.google.common.collect.Lists;
 
 import de.fhwedel.coinflip.CoinFlip;
 import de.fhwedel.coinflip.CoinFlipClient;
-import de.fhwedel.coinflip.cipher.CryptoEngine;
-import de.fhwedel.coinflip.cipher.KeyDataExtractor;
-import de.fhwedel.coinflip.cipher.KeyPairFactory;
-import de.fhwedel.coinflip.cipher.PrivateKeyParts;
+import de.fhwedel.coinflip.cipher.*;
+import de.fhwedel.coinflip.cipher.Signer;
 import de.fhwedel.coinflip.cipher.exception.CipherException;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
@@ -62,7 +62,7 @@ public class ClientProtocolHandler implements ProtocolHandler {
     // todo (18.12.2015): implement general error checking. this is just the basic for now.
 
     if (given.getEncryptedChosenCoin() == null || given.getEncryptedChosenCoin().isEmpty()) {
-      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.ERROR)
+      return new BaseProtocolBuilder().setId(ProtocolId.FIVE).setStatus(ProtocolStatus.ERROR)
           .createBaseProtocol();
     }
 
@@ -73,7 +73,22 @@ public class ClientProtocolHandler implements ProtocolHandler {
           keyPair.getPrivate(), Hex::toHexString);
       parts = KeyDataExtractor.getPrivateParts(keyPair);
     } catch (CipherException e) {
-      return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.EXCEPTION)
+      return new BaseProtocolBuilder().setId(ProtocolId.FIVE).setStatus(ProtocolStatus.EXCEPTION)
+          .createBaseProtocol();
+    }
+
+    String signature;
+    try {
+      String signatureString = given.getDesiredCoinSide() + given.getEncryptedChosenCoin()
+          + Hex.toHexString(parts.getE().toByteArray())
+          + Hex.toHexString(parts.getD().toByteArray());
+      PrivateKey certificatePrivateKey =
+          Signer.readPrivateKeyFromFile("ssl-data/client", "fhwedel");
+      signature = Hex.toHexString(Signer.sign(signatureString, certificatePrivateKey));
+    } catch (KeyStoreException | UnrecoverableKeyException | IOException | CertificateException
+        | NoSuchAlgorithmException | SignatureException | NoSuchProviderException
+        | InvalidKeyException e) {
+      return new BaseProtocolBuilder().setId(ProtocolId.FIVE).setStatus(ProtocolStatus.EXCEPTION)
           .createBaseProtocol();
     }
 
@@ -84,6 +99,7 @@ public class ClientProtocolHandler implements ProtocolHandler {
         .setAvailableSids(given.getAvailableSidsIds()).setInitialCoin(given.getPlainCoin())
         .setEnChosenCoin(given.getEncryptedChosenCoin()).setEncryptedCoin(given.getEncryptedCoin())
         .setDeChosenCoin(deChosenCoin).setKeyA(Lists.newArrayList(parts.getE(), parts.getD()))
+        .setSignature(signature)
         .createBaseProtocol();
   }
 

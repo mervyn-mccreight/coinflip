@@ -11,6 +11,7 @@ public class PayloadBuilder {
   private String deChosenCoin;
   private List<BigInteger> keyA;
   private List<BigInteger> keyB;
+  private String signature;
 
   public PayloadBuilder setInitialCoin(List<String> initialCoin) {
     this.initialCoin = initialCoin;
@@ -42,6 +43,11 @@ public class PayloadBuilder {
     return this;
   }
 
+  public PayloadBuilder setSignature(String sig) {
+    this.signature = sig;
+    return this;
+  }
+
   public PayloadBuilder setKeyB(List<BigInteger> keyB) {
     this.keyB = keyB;
     return this;
@@ -49,6 +55,6 @@ public class PayloadBuilder {
 
   public Payload createPayload() {
     return new Payload(initialCoin, desiredCoin, encryptedCoin, enChosenCoin, deChosenCoin, keyA,
-        keyB);
+        keyB, signature);
   }
 }

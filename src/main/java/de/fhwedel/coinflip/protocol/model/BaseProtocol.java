@@ -104,4 +104,8 @@ public class BaseProtocol {
   public void setProtocolId(ProtocolId protocolId) {
     this.id = protocolId;
   }
+
+  public String getSignature() {
+    return this.payload.getSignature();
+  }
 }
