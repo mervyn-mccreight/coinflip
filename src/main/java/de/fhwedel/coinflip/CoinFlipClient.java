@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.net.DefaultSocketFactory;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
@@ -21,6 +20,7 @@ import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.BaseProtocolBuilder;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
+import de.fhwedel.ssl.CreateSSLSocket;
 
 public class CoinFlipClient {
 
@@ -29,14 +29,14 @@ public class CoinFlipClient {
   public ConnectedClient connect(InetAddress serverAddress, int port)
       throws ConnectionFailedException {
     try {
-      DefaultSocketFactory defaultSocketFactory = new DefaultSocketFactory();
-      return new ConnectedClient(defaultSocketFactory.createSocket(serverAddress, port));
-    } catch (IOException e) {
+      return new ConnectedClient(CreateSSLSocket.getSSLSocket(serverAddress.getHostAddress(), port,
+          "ssl-data/client", "fhwedel", "ssl-data/root"));
+    } catch (Exception e) {
       throw new ConnectionFailedException(e);
     }
   }
 
-  public class ConnectionFailedException extends Throwable {
+  public class ConnectionFailedException extends RuntimeException {
     public ConnectionFailedException(Throwable cause) {
       super(cause);
     }

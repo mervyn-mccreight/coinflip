@@ -55,10 +55,10 @@ public class CoinFlip {
               coinFlipClient.connect(inetAddress, port);
           connectedClient.play();
 
-        } catch (Exception e) {
-          printUsageAndExit();
         } catch (CoinFlipClient.ConnectionFailedException e) {
           logger.info("Connection to server failed. Aborting...");
+        } catch (Exception e) {
+          printUsageAndExit();
         }
         break;
       default:

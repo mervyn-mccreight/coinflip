@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.net.DefaultSocketFactory;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.Maps;
@@ -20,6 +19,7 @@ import com.google.common.collect.Maps;
 import de.fhwedel.coinflip.protocol.ProtocolHandler;
 import de.fhwedel.coinflip.protocol.ServerProtocolHandler;
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
+import de.fhwedel.ssl.CreateSSLServerSocket;
 
 public class CoinFlipServer {
   private final int port;
@@ -34,8 +34,8 @@ public class CoinFlipServer {
   }
 
   public void start() {
-    DefaultSocketFactory factory = new DefaultSocketFactory();
-    try (ServerSocket serverSocket = factory.createServerSocket(port)) {
+    try (ServerSocket serverSocket = CreateSSLServerSocket.GetSSLServerSocket(port,
+        "ssl-data/server", "fhwedel", "ssl-data/root")) {
       // todo (11.12.2015): implement silent mode, where this thread will not be started.
       new Thread(new KeyboardListener()).start();
 
@@ -47,7 +47,7 @@ public class CoinFlipServer {
             "Accepting connection to server socket from: " + client.getInetAddress().toString());
         new Thread(new ConnectionHandler(client)).start();
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       logger.error("Error in creating/listening to server socket. Aborting ...", e);
       throw new RuntimeException(e);
     } finally {
