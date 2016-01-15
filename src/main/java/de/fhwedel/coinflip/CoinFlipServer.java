@@ -28,16 +28,19 @@ public class CoinFlipServer {
   private boolean running = true;
   private static final IdGenerator idGenerator = new IdGenerator();
   public static final Map<Integer, KeyPair> keyMap = Maps.newHashMap();
+  private final CoinFlipServerMode mode;
 
-  public CoinFlipServer(int port) {
+  public CoinFlipServer(int port, CoinFlipServerMode mode) {
     this.port = port;
+    this.mode = mode;
   }
 
   public void start() {
     try (ServerSocket serverSocket = CreateSSLServerSocket.GetSSLServerSocket(port,
         "ssl-data/server", "fhwedel", "ssl-data/root")) {
-      // todo (11.12.2015): implement silent mode, where this thread will not be started.
-      new Thread(new KeyboardListener()).start();
+      if (CoinFlipServerMode.INTERACTIVE.equals(this.mode)) {
+        new Thread(new KeyboardListener()).start();
+      }
 
       logger.debug("Started server at: " + serverSocket.toString());
 

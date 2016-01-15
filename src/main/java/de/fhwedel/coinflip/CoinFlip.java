@@ -30,7 +30,17 @@ public class CoinFlip {
         try {
           int port = Integer.parseInt(args[1]);
           logger.info("Starting as a server.");
-          CoinFlipServer coinFlipServer = new CoinFlipServer(port);
+          CoinFlipServer coinFlipServer = new CoinFlipServer(port, CoinFlipServerMode.INTERACTIVE);
+          coinFlipServer.start();
+        } catch (NumberFormatException e) {
+          printUsageAndExit();
+        }
+        break;
+      case "--server-silent":
+        try {
+          int port = Integer.parseInt(args[1]);
+          logger.info("Starting as a silent server. Close by killing the process or CTRL+C.");
+          CoinFlipServer coinFlipServer = new CoinFlipServer(port, CoinFlipServerMode.SILENT);
           coinFlipServer.start();
         } catch (NumberFormatException e) {
           printUsageAndExit();
