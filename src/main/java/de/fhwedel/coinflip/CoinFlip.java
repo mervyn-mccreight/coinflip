@@ -3,9 +3,12 @@ package de.fhwedel.coinflip;
 import java.net.InetAddress;
 import java.security.Security;
 
+import javax.swing.*;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import de.fhwedel.coinflip.gui.UserInterface;
 import de.fhwedel.coinflip.protocol.model.Sids;
 import de.fhwedel.coinflip.protocol.model.Versions;
 import de.fhwedel.coinflip.protocol.model.sid.Sid;
@@ -20,6 +23,16 @@ public class CoinFlip {
 
   public static void main(String[] args) {
     Security.addProvider(new BouncyCastleProvider());
+
+    if (args.length == 1) {
+      if (args[0].equals("--gui")) {
+        UserInterface userInterface = new UserInterface();
+        userInterface.pack();
+        userInterface.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        userInterface.setVisible(true);
+        return;
+      }
+    }
 
     if (args.length != 2) {
       printUsageAndExit();
