@@ -54,6 +54,11 @@ public class PayloadBuilder {
   }
 
   public Payload createPayload() {
+    if (initialCoin == null && desiredCoin == null && encryptedCoin == null && enChosenCoin == null
+        && deChosenCoin == null && keyA == null && keyB == null && signature == null) {
+      return null;
+    }
+
     return new Payload(initialCoin, desiredCoin, encryptedCoin, enChosenCoin, deChosenCoin, keyA,
         keyB, signature);
   }

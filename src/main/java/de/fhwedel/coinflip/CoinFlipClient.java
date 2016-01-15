@@ -68,7 +68,9 @@ public class CoinFlipClient {
 
         String initialMessage = parser.toJson(initialProtocol);
 
-        logger.debug("Sending game request to server.");
+        logger.debug("Sending message:");
+        logger.debug(initialMessage);
+
         IOUtils.write(initialMessage + System.lineSeparator(), out);
 
         Scanner scanner = new Scanner(in);
@@ -90,7 +92,10 @@ public class CoinFlipClient {
             statusIsOk = false;
           }
 
-          IOUtils.write(parser.toJson(protocol) + System.lineSeparator(), out);
+          String response = parser.toJson(protocol);
+          logger.debug("Sending response:");
+          logger.debug(response);
+          IOUtils.write(response + System.lineSeparator(), out);
         }
 
         return new CoinFlipClient();

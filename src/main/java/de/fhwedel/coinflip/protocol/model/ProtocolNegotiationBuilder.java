@@ -17,6 +17,9 @@ public class ProtocolNegotiationBuilder {
   }
 
   public ProtocolNegotiation createProtocolNegotiation() {
+    if (version == null && availableVersions == null) {
+      return null;
+    }
     return new ProtocolNegotiation(version, availableVersions);
   }
 }

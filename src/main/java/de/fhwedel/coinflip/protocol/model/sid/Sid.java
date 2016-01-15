@@ -1,14 +1,15 @@
 package de.fhwedel.coinflip.protocol.model.sid;
 
-import com.google.common.collect.Maps;
-
 import java.util.Map;
 import java.util.Optional;
+
+import com.google.common.collect.Maps;
 
 public enum Sid {
   SRA1024SHA1(0, 1024, "SRA/NONE/OAEPPADDING"), SRA2048SHA1(1, 2048,
       "SRA/NONE/OAEPPADDING"), SRA3072SHA1(2, 3072, "SRA/NONE/OAEPPADDING"), SRA1024SHA256(10, 1024,
-          "SRA/NONE/OAEPWITHSHA256ANDMGF1PADDING"), SRA2048SHA512(20, 2048,
+          "SRA/NONE/OAEPWITHSHA256ANDMGF1PADDING"), SRA2048SHA256(11, 2048,
+              "SRA/NONE/OAEPWITHSHA256ANDMGF1PADDING"), SRA2048SHA512(20, 2048,
               "SRA/NONE/OAEPWITHSHA512ANDMGF1PADDING");
 
   private final int id;

@@ -30,6 +30,9 @@ public class KeyNegotiationBuilder {
   }
 
   public KeyNegotiation createKeyNegotiation() {
+    if (p == null && q == null && sidId == null && availableSids == null) {
+      return null;
+    }
     return new KeyNegotiation(p, q, sidId, availableSids);
   }
 }
