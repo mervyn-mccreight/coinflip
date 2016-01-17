@@ -42,7 +42,7 @@ public class CoinFlipServer {
         new Thread(new KeyboardListener()).start();
       }
 
-      logger.debug("Started server at: " + serverSocket.toString());
+      logger.debug("Started server at: " + InetAddress.getLocalHost().getHostAddress());
 
       while (running) {
         Socket client = serverSocket.accept();
