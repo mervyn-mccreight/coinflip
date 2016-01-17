@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
@@ -19,6 +20,8 @@ import com.google.common.collect.Maps;
 import de.fhwedel.coinflip.protocol.ProtocolHandler;
 import de.fhwedel.coinflip.protocol.ServerProtocolHandler;
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
+import de.fhwedel.coinflip.protocol.model.BaseProtocol;
+import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.ssl.CreateSSLServerSocket;
 
 public class CoinFlipServer {
@@ -101,13 +104,21 @@ public class CoinFlipServer {
             return;
           }
 
+          Optional<BaseProtocol> response = handler.work(parser.parseJson(message));
           String answerString = parser.toJson(
-              handler.work(parser.parseJson(message)).orElseThrow(UnknownProtocolException::new));
+response.orElseThrow(UnknownProtocolException::new));
 
           logger.debug("Sending answer to client:");
           logger.debug(answerString);
 
           IOUtils.write(answerString + System.lineSeparator(), client.getOutputStream());
+
+          if (response.isPresent()) {
+            if (response.get().getId().equals(ProtocolId.SEVEN)) {
+              logger.debug("Sent last protocol step. Closing connection.");
+              client.close();
+            }
+          }
         }
       } catch (IOException e) {
         logger.error("Error in reading from client-sockets input stream. Aborting..", e);
