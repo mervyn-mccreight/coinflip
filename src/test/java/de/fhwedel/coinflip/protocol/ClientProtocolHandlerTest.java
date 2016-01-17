@@ -36,7 +36,7 @@ public class ClientProtocolHandlerTest {
   @Before
   public void setUp() throws Exception {
     Security.addProvider(new BouncyCastleProvider());
-    handler = new ClientProtocolHandler();
+    handler = new ClientProtocolHandler(Optional.empty(), Optional.empty());
     CoinFlipServer.keyMap.put(1, KeyPairFactory.generateKeyPair(1024, p, q));
   }
 

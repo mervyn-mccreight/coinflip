@@ -2,6 +2,7 @@ package de.fhwedel.coinflip;
 
 import java.net.InetAddress;
 import java.security.Security;
+import java.util.Optional;
 
 import javax.swing.*;
 
@@ -73,7 +74,7 @@ public class CoinFlip {
 
           InetAddress inetAddress = InetAddress.getByName(address);
 
-          CoinFlipClient coinFlipClient = new CoinFlipClient();
+          CoinFlipClient coinFlipClient = new CoinFlipClient(Optional.empty(), Optional.empty());
           CoinFlipClient.ConnectedClient connectedClient =
               coinFlipClient.connect(inetAddress, port);
           connectedClient.play();

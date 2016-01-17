@@ -6,6 +6,9 @@ package de.fhwedel.coinflip.gui;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Optional;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -14,6 +17,7 @@ import javax.swing.text.StyledDocument;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import de.fhwedel.coinflip.CoinFlipClient;
 
 public class UserInterface extends JFrame {
   public UserInterface() {
@@ -21,7 +25,22 @@ public class UserInterface extends JFrame {
   }
 
   private void playButtonOnClick(ActionEvent e) {
-    appendLogTextTo(textPane1, "Bla");
+    playButton.setEnabled(false);
+    progressLabel.setText("Status");
+    protocolProgessBar.setValue(0);
+
+    new Thread(() -> {
+      CoinFlipClient coinFlipClient = new CoinFlipClient(Optional.ofNullable(progressLabel),
+          Optional.ofNullable(protocolProgessBar));
+      try {
+        coinFlipClient.connect(InetAddress.getByName(ipTextField.getText()),
+            Integer.valueOf(portTextField.getText())).play();
+      } catch (UnknownHostException e1) {
+        progressLabel.setText("Invalid Server hostname/ip.");
+      }
+      playButton.setEnabled(true);
+    }).start();
+
   }
 
   private void appendLogTextTo(JTextPane textPane, String textToAdd) {
@@ -44,7 +63,8 @@ public class UserInterface extends JFrame {
     label2 = compFactory.createLabel("Server Port:");
     portTextField = new JTextField();
     playButton = new JButton();
-    textPane1 = new JTextPane();
+    protocolProgessBar = new JProgressBar();
+    progressLabel = new JLabel();
     CellConstraints cc = new CellConstraints();
 
     // ======== this ========
@@ -52,7 +72,7 @@ public class UserInterface extends JFrame {
     setResizable(false);
     Container contentPane = getContentPane();
     contentPane.setLayout(new FormLayout("2*(default, $lcgap), 62dlu, 3*($lcgap, default)",
-        "7*(default, $lgap), 132dlu, $lgap, default"));
+        "8*(default, $lgap), 132dlu, $lgap, default"));
 
     // ---- label1 ----
     label1.setText("Server IP:");
@@ -73,15 +93,22 @@ public class UserInterface extends JFrame {
 
     // ---- playButton ----
     playButton.setText("Play");
+    playButton.setFocusable(false);
+    playButton.setFocusPainted(false);
     playButton.addActionListener(this::playButtonOnClick);
     contentPane.add(playButton, cc.xy(5, 9));
 
-    // ---- textPane1 ----
-    textPane1.setEditable(false);
-    textPane1.setFocusable(false);
-    textPane1.setFocusCycleRoot(false);
-    textPane1.setRequestFocusEnabled(false);
-    contentPane.add(textPane1, cc.xywh(3, 15, 7, 1, CellConstraints.FILL, CellConstraints.FILL));
+    // ---- protocolProgessBar ----
+    protocolProgessBar.setMaximum(9);
+    protocolProgessBar.setStringPainted(true);
+    protocolProgessBar.setFocusable(false);
+    contentPane.add(protocolProgessBar, cc.xywh(3, 13, 7, 1));
+
+    // ---- progressLabel ----
+    progressLabel.setText("Status");
+    progressLabel.setFont(new Font("Droid Sans Mono", Font.PLAIN, 10));
+    progressLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    contentPane.add(progressLabel, cc.xywh(3, 15, 7, 1));
     pack();
     setLocationRelativeTo(getOwner());
     // JFormDesigner - End of component initialization //GEN-END:initComponents
@@ -94,6 +121,7 @@ public class UserInterface extends JFrame {
   private JLabel label2;
   private JTextField portTextField;
   private JButton playButton;
-  private JTextPane textPane1;
+  private JProgressBar protocolProgessBar;
+  private JLabel progressLabel;
   // JFormDesigner - End of variables declaration //GEN-END:variables
 }

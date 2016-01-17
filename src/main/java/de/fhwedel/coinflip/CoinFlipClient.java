@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.Optional;
 import java.util.Scanner;
 
+import javax.swing.*;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
@@ -26,11 +28,20 @@ public class CoinFlipClient {
 
   public static final String[] coin = {"HEAD", "TAIL"};
 
+  private Optional<JLabel> progressLabel;
+  private Optional<JProgressBar> progressBar;
+
+  public CoinFlipClient(Optional<JLabel> progressLabel, Optional<JProgressBar> progressBar) {
+    this.progressLabel = progressLabel;
+    this.progressBar = progressBar;
+  }
+
   public ConnectedClient connect(InetAddress serverAddress, int port)
       throws ConnectionFailedException {
     try {
+      this.progressLabel.ifPresent(label -> label.setText("Connecting..."));
       return new ConnectedClient(CreateSSLSocket.getSSLSocket(serverAddress.getHostAddress(), port,
-          "ssl-data/client", "fhwedel", "ssl-data/root"));
+          "ssl-data/client", "fhwedel", "ssl-data/root"), this.progressLabel, this.progressBar);
     } catch (Exception e) {
       throw new ConnectionFailedException(e);
     }
@@ -48,11 +59,20 @@ public class CoinFlipClient {
     private ClientProtocolHandler handler;
     private ProtocolParser parser;
     private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
+    private Optional<JLabel> progressLabel;
+    private Optional<JProgressBar> progressBar;
 
-    private ConnectedClient(Socket connection) {
+    private ConnectedClient(Socket connection, Optional<JLabel> progressLabel,
+        Optional<JProgressBar> progressBar) {
       this.connection = connection;
-      this.handler = new ClientProtocolHandler();
       this.parser = new ProtocolParser();
+      this.progressLabel = progressLabel;
+      this.progressBar = progressBar;
+
+      this.handler = new ClientProtocolHandler(this.progressLabel, this.progressBar);
+
+      this.progressBar.ifPresent(bar -> bar.setValue(1));
+      this.progressLabel.ifPresent(label -> label.setText("Established Connection."));
     }
 
     public CoinFlipClient play() {
@@ -70,6 +90,9 @@ public class CoinFlipClient {
 
         logger.debug("Sending message:");
         logger.debug(initialMessage);
+
+        this.progressLabel.ifPresent(label -> label.setText("Sending initial message to server."));
+        this.progressBar.ifPresent(bar -> bar.setValue(2));
 
         IOUtils.write(initialMessage + System.lineSeparator(), out);
 
@@ -93,8 +116,20 @@ public class CoinFlipClient {
                 String result = handler.determineCoinResult(messageProtocol.get());
                 logger.info("Coinflip result is: " + result);
                 logger.info("We guessed: " + messageProtocol.get().getDesiredCoinSide());
+
+                this.progressBar.ifPresent(bar -> bar.setValue(bar.getMaximum()));
+
+                if (result.equals(messageProtocol.get().getDesiredCoinSide())) {
+                  this.progressLabel
+                      .ifPresent(label -> label.setText("The game is over. You won."));
+                } else {
+                  this.progressLabel
+                      .ifPresent(label -> label.setText("The game is over. You lost."));
+                }
+
               } catch (CipherException e) {
                 logger.error("Error decoding the result");
+                this.progressLabel.ifPresent(label -> label.setText("Error in decoding result."));
                 e.printStackTrace();
               }
               break;
@@ -114,12 +149,12 @@ public class CoinFlipClient {
           IOUtils.write(response + System.lineSeparator(), out);
         }
 
-        return new CoinFlipClient();
+        return new CoinFlipClient(this.progressLabel, this.progressBar);
       } catch (IOException e) {
         throw new RuntimeException(e);
       } catch (UnknownProtocolException e) {
         logger.info("Received unexpected message from the server. Aborting connection.");
-        return new CoinFlipClient();
+        return new CoinFlipClient(this.progressLabel, this.progressBar);
       }
     }
   }

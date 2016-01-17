@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.*;
+
 import org.bouncycastle.util.encoders.Hex;
 
 import com.google.common.collect.Lists;
@@ -25,6 +27,13 @@ import de.fhwedel.coinflip.protocol.model.status.ProtocolStatus;
 public class ClientProtocolHandler implements ProtocolHandler {
 
   private KeyPair keyPair;
+  private Optional<JLabel> progressLabel;
+  private Optional<JProgressBar> progressBar;
+
+  public ClientProtocolHandler(Optional<JLabel> progressLabel, Optional<JProgressBar> progressBar) {
+    this.progressLabel = progressLabel;
+    this.progressBar = progressBar;
+  }
 
   @Override
   public Optional<BaseProtocol> work(Optional<BaseProtocol> maybeGiven) {
@@ -33,19 +42,26 @@ public class ClientProtocolHandler implements ProtocolHandler {
       BaseProtocol given = maybeGiven.get();
 
       if (given.getStatus() != ProtocolStatus.OK.getId()) {
+        this.progressLabel.ifPresent(label -> label.setText("The server sent an error."));
         return Optional.empty();
       }
 
       switch (given.getId()) {
         case ONE:
+          this.progressLabel.ifPresent(label -> label.setText("Version negotiation finished."));
+          this.progressBar.ifPresent(bar -> bar.setValue(3));
           return Optional.of(handleProtocolStepOne(given));
         case THREE:
+          this.progressLabel
+              .ifPresent(label -> label.setText("Sig negotiation finished. Received modulus."));
+          this.progressBar.ifPresent(bar -> bar.setValue(5));
           return Optional.of(handleProtocolStepThree(given));
-
         case FIVE:
+          this.progressLabel.ifPresent(
+              label -> label.setText("Decrypting chosen coin side and sending signature."));
+          this.progressBar.ifPresent(bar -> bar.setValue(7));
           return Optional.of(handleProtocolStepFive(given));
         case SEVEN:
-          // todo (18.12.2015): implement last step: validation and check who won :-)
           break;
         case ZERO:
         case TWO:
@@ -100,6 +116,10 @@ public class ClientProtocolHandler implements ProtocolHandler {
           .createBaseProtocol();
     }
 
+    this.progressLabel
+        .ifPresent(label -> label.setText("Decrypting chosen coin side and sending signature."));
+    this.progressBar.ifPresent(bar -> bar.setValue(8));
+
     return new BaseProtocolBuilder().setId(ProtocolId.SIX).setStatus(ProtocolStatus.OK)
         .setChosenVersion(given.getNegotiatedVersion())
         .setProposedVersions(given.getProposedVersions())
@@ -146,6 +166,9 @@ public class ClientProtocolHandler implements ProtocolHandler {
           .createBaseProtocol();
     }
 
+    this.progressLabel.ifPresent(label -> label.setText("Choosing and encrypting coin-side."));
+    this.progressBar.ifPresent(bar -> bar.setValue(6));
+
     return new BaseProtocolBuilder().setId(ProtocolId.FOUR).setStatus(ProtocolStatus.OK)
         .setChosenVersion(given.getNegotiatedVersion())
         .setProposedVersions(given.getProposedVersions())
@@ -161,6 +184,9 @@ public class ClientProtocolHandler implements ProtocolHandler {
       return new BaseProtocolBuilder().setId(ProtocolId.ONE)
           .setStatus(ProtocolStatus.CHOSEN_VERSION_UNKNOWN).createBaseProtocol();
     }
+
+    this.progressLabel.ifPresent(label -> label.setText("Proposing supported sids."));
+    this.progressBar.ifPresent(bar -> bar.setValue(4));
 
     return new BaseProtocolBuilder().setId(ProtocolId.TWO).setStatus(ProtocolStatus.OK)
         .setProposedVersions(given.getProposedVersions())
