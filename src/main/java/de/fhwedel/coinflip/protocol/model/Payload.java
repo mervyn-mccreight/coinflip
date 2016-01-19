@@ -16,11 +16,11 @@ public class Payload {
   private List<BigInteger> keyA;
   private List<BigInteger> keyB;
 
-  private String signature;
+  private String signatureA;
 
   public Payload(List<String> initialCoin, String desiredCoin, List<String> encryptedCoin,
       String enChosenCoin, String deChosenCoin, List<BigInteger> keyA, List<BigInteger> keyB,
-      String signature) {
+      String signatureA) {
     this.initialCoin = initialCoin;
     this.desiredCoin = desiredCoin;
     this.encryptedCoin = encryptedCoin;
@@ -28,7 +28,7 @@ public class Payload {
     this.deChosenCoin = deChosenCoin;
     this.keyA = keyA;
     this.keyB = keyB;
-    this.signature = signature;
+    this.signatureA = signatureA;
   }
 
   public List<String> getInitialCoin() {
@@ -59,7 +59,7 @@ public class Payload {
     return Lists.newArrayList(this.keyB);
   }
 
-  public String getSignature() {
-    return signature;
+  public String getSignatureA() {
+    return signatureA;
   }
 }

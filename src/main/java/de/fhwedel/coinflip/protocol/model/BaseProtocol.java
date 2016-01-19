@@ -106,6 +106,6 @@ public class BaseProtocol {
   }
 
   public String getSignature() {
-    return this.payload.getSignature();
+    return this.payload.getSignatureA();
   }
 }
