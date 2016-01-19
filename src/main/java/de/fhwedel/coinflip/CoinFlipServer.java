@@ -35,6 +35,7 @@ public class CoinFlipServer {
   public static final Map<Integer, KeyPair> keyMap = Maps.newHashMap();
   private final CoinFlipServerMode mode;
   private static final String BROKER_URI = "https://52.35.76.130:8443/broker/1.0/join";
+  private Optional<PingingService> pingingService = Optional.empty();
 
   public CoinFlipServer(int port, CoinFlipServerMode mode) {
     this.port = port;
@@ -53,9 +54,10 @@ public class CoinFlipServer {
 
       String myUrl = hostAddress + ":" + String.valueOf(this.port);
 
-      final PingingService pingingService = new HttpPingingService(BROKER_URI, "Fluffels.de", myUrl,
-          "ssl-data/memc_keystore.jks", "secret");
-      pingingService.start();
+      pingingService = Optional.of(new HttpPingingService(BROKER_URI, "Fluffels.de", myUrl,
+          "ssl-data/memc_keystore.jks", "secret"));
+
+      pingingService.ifPresent(PingingService::start);
 
       while (running) {
         Socket client = serverSocket.accept();
@@ -67,6 +69,7 @@ public class CoinFlipServer {
       logger.error("Error in creating/listening to server socket. Aborting ...", e);
       throw new RuntimeException(e);
     } finally {
+      pingingService.ifPresent(PingingService::stop);
       logger.debug("Server socket shutting down.");
     }
   }
