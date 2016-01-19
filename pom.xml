@@ -119,7 +119,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <finalName>${project.groupId}-${project.version}-full</finalName>
+                    <finalName>${project.artifactId}-${project.version}-full</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
