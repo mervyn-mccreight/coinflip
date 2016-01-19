@@ -54,7 +54,7 @@ public class CoinFlipServer {
 
       String myUrl = hostAddress + ":" + String.valueOf(this.port);
 
-      pingingService = Optional.of(new HttpPingingService(BROKER_URI, "Fluffels.de", myUrl,
+      pingingService = Optional.of(new HttpPingingService(BROKER_URI, "Mr. Fluffels", myUrl,
           "ssl-data/memc_keystore.jks", "secret"));
 
       pingingService.ifPresent(PingingService::start);

@@ -3,15 +3,11 @@ package de.fhwedel.ssl;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSocket;
+import javax.net.ssl.*;
 
 import de.fhwedel.ssl.config.ApplySecuritySettings;
 import de.fhwedel.ssl.keymanager.KeyManagerMethods;
-import de.fhwedel.ssl.trustmanager.TrustManagerMethods;;
+import de.fhwedel.ssl.trustmanager.TrustManagerMethods;
 
 public class CreateSSLServerSocket {
 
@@ -19,7 +15,7 @@ public class CreateSSLServerSocket {
 			String trustStore) throws Exception {
 
 		// ApplySecuritySettings.printdisabledAlgorithms();
-		ApplySecuritySettings.setdisabledAlgorithms();
+    // ApplySecuritySettings.setdisabledAlgorithms();
 		// ApplySecuritySettings.printdisabledAlgorithms();
 
 		SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
