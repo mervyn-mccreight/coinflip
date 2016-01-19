@@ -7,6 +7,24 @@ What you need to compile & run the project
 0. open-jdk8 (the client/server does not run with oracle-java8, because of the unsigned bouncy castle fork)
 0. Maven
 
+Structure needed to run the jar
+-------
+The jar needs to have to be in the same directory as the directory "ssl-data".
+The "ssl-data" directory contains keystores used to establish secure TLS-connections to other clients.
+The needed directory structure:
+```
+.
++-- <coinflip-jar-file>.jar
++-- ssl-data
+|   +-- client
+|   +-- keystore
+|   +-- memc_keystore.jks
+|   +-- root
+|   +-- server
+```
+
+The needed files are provided in the repository.
+
 Building
 -------
 This project uses Maven as a building-tool.
