@@ -23,6 +23,8 @@ import de.fhwedel.coinflip.protocol.io.ProtocolParser;
 import de.fhwedel.coinflip.protocol.model.BaseProtocol;
 import de.fhwedel.coinflip.protocol.model.id.ProtocolId;
 import de.fhwedel.ssl.CreateSSLServerSocket;
+import gr.planetz.PingingService;
+import gr.planetz.impl.HttpPingingService;
 
 public class CoinFlipServer {
   private final int port;
@@ -32,6 +34,7 @@ public class CoinFlipServer {
   private static final IdGenerator idGenerator = new IdGenerator();
   public static final Map<Integer, KeyPair> keyMap = Maps.newHashMap();
   private final CoinFlipServerMode mode;
+  private static final String BROKER_URI = "https://52.35.76.130:8443/broker/1.0/join";
 
   public CoinFlipServer(int port, CoinFlipServerMode mode) {
     this.port = port;
@@ -45,7 +48,14 @@ public class CoinFlipServer {
         new Thread(new KeyboardListener()).start();
       }
 
-      logger.debug("Started server at: " + InetAddress.getLocalHost().getHostAddress());
+      String hostAddress = InetAddress.getLocalHost().getHostAddress();
+      logger.debug("Started server at: " + hostAddress);
+
+      String myUrl = hostAddress + ":" + String.valueOf(this.port);
+
+      final PingingService pingingService = new HttpPingingService(BROKER_URI, "Fluffels.de", myUrl,
+          "ssl-data/memc_keystore.jks", "secret");
+      pingingService.start();
 
       while (running) {
         Socket client = serverSocket.accept();
