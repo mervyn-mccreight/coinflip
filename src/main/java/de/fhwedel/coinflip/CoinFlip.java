@@ -4,6 +4,9 @@ import java.net.InetAddress;
 import java.security.Security;
 import java.util.Optional;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
@@ -24,6 +27,8 @@ public class CoinFlip {
 
   public static void main(String[] args) {
     Security.addProvider(new BouncyCastleProvider());
+
+    checkProtocols();
 
     if (args.length == 1) {
       if (args[0].equals("--gui")) {
@@ -96,5 +101,31 @@ public class CoinFlip {
     System.out
         .println("Usage: start the program either with --client <ip:port> or --server <port>");
     System.exit(1);
+  }
+
+  private static void checkProtocols() {
+    try {
+      SSLContext context = SSLContext.getInstance("TLS");
+      context.init(null, null, null);
+
+      SSLSocketFactory factory = context.getSocketFactory();
+      SSLSocket socket = (SSLSocket) factory.createSocket();
+
+      String[] protocols = socket.getSupportedProtocols();
+
+      logger.debug("Supported Protocols: " + protocols.length);
+      for (String protocol : protocols) {
+        logger.debug(" " + protocol);
+      }
+
+      protocols = socket.getEnabledProtocols();
+
+      logger.debug("Enabled Protocols: " + protocols.length);
+      for (String protocol : protocols) {
+        logger.debug(" " + protocol);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }
