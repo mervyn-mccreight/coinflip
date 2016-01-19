@@ -17,10 +17,11 @@ public class ApplySecuritySettings {
 	public static void setdisabledAlgorithms() {
 		// Default for openJDK1.7 : SSLv3, DH keySize < 768
 		java.security.Security.setProperty("jdk.tls.disabledAlgorithms",
-				"SSLv2Hello, SSLv3, TLSv1, TLSv1.1, DH keySize < 1024");
+        "SSLv2Hello, SSLv3, TLSv1.1, DH keySize < 1024");
 
 		// Default for openJDK1.7 : MD2, RSA keySize < 1024
-		java.security.Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, MD5, DSA, RSA keySize < 2048");
+    java.security.Security.setProperty("jdk.certpath.disabledAlgorithms",
+        "MD2, DSA, RSA keySize < 2048");
 	}
 
 	public static void setFilteredCipher(Object sslSocket) {
@@ -32,7 +33,7 @@ public class ApplySecuritySettings {
 			ciphers = ((SSLServerSocket)sslSocket).getEnabledCipherSuites();
 		}
 		
-		ArrayList<String> list = new ArrayList<String>();
+    ArrayList<String> list = new ArrayList<>();
 
 		// TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
 		// TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384

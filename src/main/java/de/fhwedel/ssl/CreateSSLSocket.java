@@ -18,7 +18,7 @@ public class CreateSSLSocket {
 			String trustStore) throws Exception {
 
 		// Disable Algorithms
-    // ApplySecuritySettings.setdisabledAlgorithms();
+    ApplySecuritySettings.setdisabledAlgorithms();
 
 		SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
 
