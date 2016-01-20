@@ -11,8 +11,6 @@ import java.net.UnknownHostException;
 import java.util.Optional;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.StyledDocument;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -21,6 +19,12 @@ import de.fhwedel.coinflip.CoinFlipClient;
 
 public class UserInterface extends JFrame {
   public UserInterface() {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+        | UnsupportedLookAndFeelException e) {
+      throw new RuntimeException(e);
+    }
     initComponents();
   }
 
@@ -41,17 +45,6 @@ public class UserInterface extends JFrame {
       playButton.setEnabled(true);
     }).start();
 
-  }
-
-  private void appendLogTextTo(JTextPane textPane, String textToAdd) {
-    StyledDocument styledDocument = textPane.getStyledDocument();
-    try {
-      styledDocument.insertString(styledDocument.getLength(),
-          (styledDocument.getLength() == 0 ? "" : System.lineSeparator()) + textToAdd,
-          textPane.getCharacterAttributes());
-    } catch (BadLocationException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private void initComponents() {
@@ -106,7 +99,7 @@ public class UserInterface extends JFrame {
 
     // ---- progressLabel ----
     progressLabel.setText("Status");
-    progressLabel.setFont(new Font("Droid Sans Mono", Font.PLAIN, 10));
+    progressLabel.setFont(UIManager.getFont("Label.font"));
     progressLabel.setHorizontalAlignment(SwingConstants.CENTER);
     contentPane.add(progressLabel, cc.xywh(3, 15, 7, 1));
     pack();
