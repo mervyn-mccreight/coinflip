@@ -78,15 +78,22 @@ public class UserInterface extends JFrame {
     protocolProgessBar.setValue(0);
 
     new Thread(() -> {
+      try {
       CoinFlipClient coinFlipClient = new CoinFlipClient(Optional.ofNullable(progressLabel),
           Optional.ofNullable(protocolProgessBar));
-      try {
         coinFlipClient.connect(InetAddress.getByName(ipTextField.getText()),
             Integer.valueOf(portTextField.getText())).play();
       } catch (UnknownHostException e1) {
         progressLabel.setText("Invalid Server hostname/ip.");
+      } catch (CoinFlipClient.ConnectionFailedException e1) {
+        progressLabel.setText("Failed to connect.");
+      } catch (NumberFormatException e1) {
+        progressLabel.setText("Invalid port.");
+      } catch (RuntimeException e1) {
+        progressLabel.setText("Unknown client error.");
+      } finally {
+        playButton.setEnabled(true);
       }
-      playButton.setEnabled(true);
     }).start();
 
   }
