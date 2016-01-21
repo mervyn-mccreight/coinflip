@@ -36,10 +36,12 @@ public class CoinFlipServer {
   private final CoinFlipServerMode mode;
   private static final String BROKER_URI = "https://52.35.76.130:8443/broker/1.0/join";
   private Optional<PingingService> pingingService = Optional.empty();
+  private String nickname;
 
-  public CoinFlipServer(int port, CoinFlipServerMode mode) {
+  public CoinFlipServer(int port, CoinFlipServerMode mode, String nickname) {
     this.port = port;
     this.mode = mode;
+    this.nickname = nickname;
   }
 
   public void start() {
@@ -54,7 +56,7 @@ public class CoinFlipServer {
 
       String myUrl = hostAddress + ":" + String.valueOf(this.port);
 
-      pingingService = Optional.of(new HttpPingingService(BROKER_URI, "Mr. Fluffels", myUrl,
+      pingingService = Optional.of(new HttpPingingService(BROKER_URI, nickname, myUrl,
           "ssl-data/memc_keystore.jks", "secret"));
 
       pingingService.ifPresent(PingingService::start);

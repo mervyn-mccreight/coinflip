@@ -35,16 +35,24 @@ public class CoinFlip {
       }
     }
 
-    if (args.length != 2) {
+    if (args.length < 2) {
+      printUsageAndExit();
+    }
+
+    if (args.length > 3) {
       printUsageAndExit();
     }
 
     switch (args[0]) {
       case "--server":
+        if (args.length != 3) {
+          printUsageAndExit();
+        }
         try {
           int port = Integer.parseInt(args[1]);
           logger.info("Starting as a server.");
-          CoinFlipServer coinFlipServer = new CoinFlipServer(port, CoinFlipServerMode.INTERACTIVE);
+          CoinFlipServer coinFlipServer =
+              new CoinFlipServer(port, CoinFlipServerMode.INTERACTIVE, args[2]);
           coinFlipServer.start();
         } catch (NumberFormatException e) {
           printUsageAndExit();
@@ -52,15 +60,22 @@ public class CoinFlip {
         break;
       case "--server-silent":
         try {
+          if (args.length != 3) {
+            printUsageAndExit();
+          }
           int port = Integer.parseInt(args[1]);
           logger.info("Starting as a silent server. Close by killing the process or CTRL+C.");
-          CoinFlipServer coinFlipServer = new CoinFlipServer(port, CoinFlipServerMode.SILENT);
+          CoinFlipServer coinFlipServer =
+              new CoinFlipServer(port, CoinFlipServerMode.SILENT, args[2]);
           coinFlipServer.start();
         } catch (NumberFormatException e) {
           printUsageAndExit();
         }
         break;
       case "--client":
+        if (args.length != 2) {
+          printUsageAndExit();
+        }
         logger.info("Starting as a client.");
         String addressString = args[1];
         String[] split = addressString.split(":");
@@ -94,7 +109,8 @@ public class CoinFlip {
   private static void printUsageAndExit() {
     logger.info("Main called with wrong parameters.");
     System.out
-        .println("Usage: start the program either with --client <ip:port> or --server <port>");
+.println(
+        "Usage: start the program either with --client <ip:port>, --server[-silent] <port> <servername> or --gui");
     System.exit(1);
   }
 }
