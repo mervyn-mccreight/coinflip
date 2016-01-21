@@ -58,7 +58,7 @@ java -jar <path-to-jar> --server <port> <servername>
 ```
 where the port specifies the port the server is listening on. To stop the server type "exit" to the upcoming server-shell and press "ENTER".
 
-To run the console-client execute
+To run the silent-server (non-interactive) execute
 ```
 java -jar <path-to-jar> --server-silent <port> <servername>
 ```
