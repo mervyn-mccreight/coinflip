@@ -54,13 +54,13 @@ the hostname can either be an ip, or a domain-name.
 
 To run the interactive-server execute
 ```
-java -jar <path-to-jar> --server <port>
+java -jar <path-to-jar> --server <port> <servername>
 ```
 where the port specifies the port the server is listening on. To stop the server type "exit" to the upcoming server-shell and press "ENTER".
 
 To run the console-client execute
 ```
-java -jar <path-to-jar> --server-silent <port>
+java -jar <path-to-jar> --server-silent <port> <servername>
 ```
 where the port specifies the port the server is listening on.
 
