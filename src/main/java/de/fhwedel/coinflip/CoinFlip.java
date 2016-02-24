@@ -25,6 +25,12 @@ public class CoinFlip {
   public static void main(String[] args) {
     Security.addProvider(new BouncyCastleProvider());
 
+    // re-enable md5 hashes (disabled in newest java8 release)
+    // this is dirty, the broker should not use md5-hash signatures in his certificates!
+    java.security.Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, DH keySize < 768");
+    java.security.Security.setProperty("jdk.certpath.disabledAlgorithms",
+        "MD2, RSA keySize < 1024");
+
     if (args.length == 1) {
       if (args[0].equals("--gui")) {
         UserInterface userInterface = new UserInterface();
