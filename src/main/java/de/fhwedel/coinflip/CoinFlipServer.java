@@ -1,5 +1,6 @@
 package de.fhwedel.coinflip;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -7,16 +8,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 
+import de.fhwedel.coinflip.config.Configuration;
 import de.fhwedel.coinflip.protocol.ProtocolHandler;
 import de.fhwedel.coinflip.protocol.ServerProtocolHandler;
 import de.fhwedel.coinflip.protocol.io.ProtocolParser;
@@ -37,6 +43,20 @@ public class CoinFlipServer {
   private static final String BROKER_URI = "https://52.35.76.130:8443/broker/1.0/join";
   private Optional<PingingService> pingingService = Optional.empty();
   private String nickname;
+  private static final Configuration configuration;
+
+  static {
+    String configPath = "config/config.json";
+    File file = new File(configPath);
+    try {
+      List<String> lines = FileUtils.readLines(file, "UTF-8");
+      String fileContent = lines.stream().collect(Collectors.joining(""));
+      configuration = new Gson().fromJson(fileContent, Configuration.class);
+    } catch (IOException e) {
+      logger.error("missing configuration file at: " + configPath);
+      throw new RuntimeException(e);
+    }
+  }
 
   public CoinFlipServer(int port, CoinFlipServerMode mode, String nickname) {
     this.port = port;
@@ -56,7 +76,8 @@ public class CoinFlipServer {
 
       String myUrl = hostAddress + ":" + String.valueOf(this.port);
 
-      pingingService = Optional.of(new HttpPingingService(BROKER_URI, nickname, myUrl,
+      pingingService = Optional.of(new HttpPingingService(configuration.brokerJoinUri(), nickname,
+          myUrl,
           "ssl-data/memc_keystore.jks", "secret"));
 
       pingingService.ifPresent(PingingService::start);

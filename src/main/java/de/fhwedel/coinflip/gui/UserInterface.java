@@ -6,6 +6,7 @@ package de.fhwedel.coinflip.gui;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -15,17 +16,22 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.io.FileUtils;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import de.fhwedel.coinflip.CoinFlipClient;
+import de.fhwedel.coinflip.config.Configuration;
 import gr.planetz.impl.HttpPingingService;
 
 public class UserInterface extends JFrame {
@@ -34,6 +40,20 @@ public class UserInterface extends JFrame {
   private Optional<HttpPingingService> pingingService = Optional.empty();
   private Map<String, String> players = Maps.newHashMap();
 
+  private static final Configuration configuration;
+
+  static {
+    String configPath = "config/config.json";
+    File file = new File(configPath);
+    try {
+      java.util.List<String> lines = FileUtils.readLines(file, "UTF-8");
+      String fileContent = lines.stream().collect(Collectors.joining(""));
+      configuration = new Gson().fromJson(fileContent, Configuration.class);
+    } catch (IOException e) {
+      throw new RuntimeException("missing configuration file at: " + configPath, e);
+    }
+  }
+
   public UserInterface() {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -41,6 +61,7 @@ public class UserInterface extends JFrame {
         | UnsupportedLookAndFeelException e) {
       throw new RuntimeException(e);
     }
+
     initComponents();
     tableModel = new DefaultTableModel(new Object[] {"Playername", "Address"}, 0);
     playerMap = new JTable(tableModel);
@@ -65,7 +86,8 @@ public class UserInterface extends JFrame {
   private void startBroker() {
     try {
       pingingService = Optional
-          .of(new HttpPingingService(BROKER_URI, "", "", "ssl-data/memc_keystore.jks", "secret"));
+.of(new HttpPingingService(configuration.brokerPlayersUri(), "", "",
+          "ssl-data/memc_keystore.jks", "secret"));
     } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException
         | KeyManagementException e) {
       throw new RuntimeException(e);
