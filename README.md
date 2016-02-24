@@ -10,11 +10,14 @@ What you need to compile & run the project
 Structure needed to run the jar
 -------
 The jar needs to have to be in the same directory as the directory "ssl-data".
-The "ssl-data" directory contains keystores used to establish secure TLS-connections to other clients.
+The "ssl-data" directory contains key stores used to establish secure TLS-connections to other clients.
+The "config" directory contains a configuration file.
 The needed directory structure:
 ```
 .
 +-- <coinflip-jar-file>.jar
++-- config
+|   +-- config.json
 +-- ssl-data
 |   +-- client
 |   +-- keystore
@@ -24,6 +27,17 @@ The needed directory structure:
 ```
 
 The needed files are provided in the repository.
+
+Configuration
+-------
+The client is dependent on a configuration file. It is in JSON format. For now it contains the address of the broker-service.
+Example configuration:
+```
+{
+  "brokerAddress": "<broker-host>:<port>"
+}
+```
+
 
 Building
 -------
