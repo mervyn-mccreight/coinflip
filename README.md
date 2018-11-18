@@ -29,7 +29,7 @@ In the following we name these two players _Alice_ and _Bob_.
 
 1. _Alice_ generates two messages. _M1_ represents _Heads_ and _M2_ represents _Tails_. She adds a random string only she knows to both messages.
 2. _Alice_ generates a key-pair _A_
-3. _Alice_ sends __E_A(M)__ and __E_B(M)__ to _Bob_ in random order. _Bob_ __must not__ know the order.
+3. _Alice_ sends __E_A(M1)__ and __E_A(M2)__ to _Bob_ in random order. _Bob_ __must not__ know the order.
 4. _Bob_ picks one oif the messages. We call this message __E_A(M)__.
 5. _Bob_ generates a key-pair _B_.
 6. _Bob_ encrypts the picked message __E_A(M)__ with his key, which results in __E_B(E_A(M))__ and sends this to _Alice_.
