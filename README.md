@@ -15,7 +15,8 @@ To proof the concept of the protocol, we took the simplest game of changes - a c
 
 ### Protocol
 #### Commutative public-key algorithm
-The protocol we developed needs a _commutative_ public-key algorithm to work. A public-key algorithm is commutative, if the following equation holds.  
+The protocol we developed needs a _commutative_ public-key algorithm to work. A public-key algorithm is commutative, if the following equation holds.
+$~$
 ![Commutative public-key algorithm](https://latex.codecogs.com/gif.latex?%5Cdpi%7B100%7D%20%5Clarge%20D_%7BK1%7D%28E_%7BK2%7D%28E_%7BK1%7D%28M%29%29%29%20%3D%20E_%7BK2%7D%28M%29%5C%5C%5C%5C%20where%5C%20D_K%5C%20describes%5C%20an%5C%20decryption%5C%20with%5C%20key%5C%20K%5C%5C%20and%5C%20E_K%5C%20describes%5C%20an%5C%20encryption%5C%20with%5C%20key%5C%20K%5C%5C%20and%5C%20M%5C%20describes%5C%20an%5C%20arbitrary%5C%20message.)
 
 which basically means, that the following is possible:
