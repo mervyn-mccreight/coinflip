@@ -24,7 +24,7 @@ which basically means, that the following is possible:
 2. Encrypt the result with K2
 3. Decrypting the result with K1 obtain M encrypted with K2
 
-#### Do coinflipping using the protocol
+#### Definition of the protocol
 Imagine we have two players who want to play a secure online coinflip against each other, without the need to trust a server to do correct randomness for the coinflip result.
 In the following we name these two players _Alice_ and _Bob_.
 
