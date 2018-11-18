@@ -29,11 +29,11 @@ In the following we name these two players _Alice_ and _Bob_.
 
 1. _Alice_ generates two messages. _M1_ represents _Heads_ and _M2_ represents _Tails_. She adds a random string only she knows to both messages.
 2. _Alice_ generates a key-pair _A_
-3. _Alice_ sends __E[A](M)__ and __E[B](M)__ to _Bob_ in random order. _Bob_ __must not__ know the order.
-4. _Bob_ picks one oif the messages. We call this message __E[A](M)__.
+3. _Alice_ sends __E_A(M)__ and __E_B(M)__ to _Bob_ in random order. _Bob_ __must not__ know the order.
+4. _Bob_ picks one oif the messages. We call this message __E_A(M)__.
 5. _Bob_ generates a key-pair _B_.
-6. _Bob_ encrypts the picked message __E[A](M)__ with his key, which results in __E[B](E[A](M))__ and sends this to _Alice_.
-7. _Alice_ decrypts the message _Bob_ sent during _6_, which results to __E[B](M)__ and sends this to _Bob_.
+6. _Bob_ encrypts the picked message __E_A(M)__ with his key, which results in __E_B(E_A(M))__ and sends this to _Alice_.
+7. _Alice_ decrypts the message _Bob_ sent during _6_, which results to __E_B(M)__ and sends this to _Bob_.
 8. _Bob_ decrypts the message, which results in _M_. This represents the __result of the coinflip__. _Bob_ sends _M_ to _Alice_.
 9. _Alice_ checks if the attached random-string is still correct.
 10. _Alice_ and _Bob_ reveal their secret keys to each other.
